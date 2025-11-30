@@ -1,6 +1,6 @@
 /**
  * Abstract base class representing a general person
- * This class will never be instantiated directly
+ * This class will never be instantiated directly - now declared as abstract
  */
 public abstract class Person {
     // Instance variables for person attributes
@@ -85,6 +85,13 @@ public abstract class Person {
     public void setGender(String gender) {
         this.gender = gender;
     }
+    
+    /**
+     * Abstract method that must be implemented by subclasses
+     * Each person type should define their specific role
+     * @return A string describing the person's role
+     */
+    public abstract String getRole();
     
     /**
      * Returns a string representation of the person

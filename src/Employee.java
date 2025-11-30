@@ -87,6 +87,15 @@ public class Employee extends Person {
     }
     
     /**
+     * Implementation of abstract method from Person class
+     * @return String describing the employee's role
+     */
+    @Override
+    public String getRole() {
+        return "Theme Park Employee - " + position + " in " + department + " department";
+    }
+    
+    /**
      * Returns a string representation of the employee
      * Includes both inherited and employee-specific attributes
      * @return Formatted string with employee details

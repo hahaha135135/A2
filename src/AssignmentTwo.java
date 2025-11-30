@@ -10,80 +10,91 @@ public class AssignmentTwo {
      */
     public static void main(String[] args) {
         System.out.println("=== PROG2004 Assignment 2 - Theme Park Management System ===");
-        System.out.println("=== Part 1: Classes and Inheritance Demonstration ===\n");
+        System.out.println("=== Part 2: Abstract Class and Interface Demonstration ===\n");
         
         // Create instance to call instance methods
         AssignmentTwo assignment = new AssignmentTwo();
-        assignment.demoPartOne();
+        assignment.demoPartTwo();
     }
     
     /**
-     * Demonstrates Part 1 functionality - Class creation and inheritance
-     * Shows how to create objects and use inheritance hierarchy
+     * Demonstrates Part 2 functionality - Abstract class and interface
+     * Shows abstraction and interface implementation
      */
-    public void demoPartOne() {
-        System.out.println("--- Creating Employee Objects ---");
+    public void demoPartTwo() {
+        System.out.println("--- Testing Abstract Class (Person) ---");
         
-        // Create employees using different constructors
-        Employee defaultEmployee = new Employee();
-        Employee rideOperator = new Employee("John Smith", 28, "Male", "E1001", "Ride Operations", "Operator");
-        Employee supervisor = new Employee("Sarah Johnson", 35, "Female", "E1002", "Management", "Supervisor");
+        // Person is now abstract - cannot instantiate directly
+        // This would cause compilation error:
+        // Person person = new Person(); // INVALID - Person is abstract
         
-        System.out.println("\n--- Creating Visitor Objects ---");
+        System.out.println("Person class is now abstract - cannot create Person objects directly");
+        System.out.println("Must create objects through concrete subclasses (Employee, Visitor)\n");
         
-        // Create visitors using different constructors
-        Visitor defaultVisitor = new Visitor();
-        Visitor familyVisitor = new Visitor("Mike Wilson", 32, "Male", "V2001", "Family Pass", false);
-        Visitor seasonPassVisitor = new Visitor("Emma Davis", 25, "Female", "V2002", "Season Pass", true);
+        System.out.println("--- Testing Concrete Subclasses ---");
         
-        System.out.println("\n--- Creating Ride Objects ---");
+        // Create employees and visitors
+        Employee operator = new Employee("John Smith", 28, "Male", "E1001", "Ride Operations", "Operator");
+        Visitor visitor = new Visitor("Alice Brown", 25, "Female", "V2001", "Premium", true);
         
-        // Create rides and assign operators
-        Ride rollerCoaster = new Ride("Thunder Bolt", "Roller Coaster", 24, true, rideOperator);
-        Ride ferrisWheel = new Ride("Sky Wheel", "Ferris Wheel", 40, true, supervisor);
-        Ride waterRide = new Ride(); // Using default constructor
-        waterRide.setRideName("Splash Mountain");
-        waterRide.setRideType("Water Ride");
-        waterRide.setCapacity(12);
-        waterRide.setOperational(false); // Ride is under maintenance
-        waterRide.setOperator(defaultEmployee);
+        // Test the abstract method implementation
+        System.out.println("\nEmployee Role: " + operator.getRole());
+        System.out.println("Visitor Role: " + visitor.getRole());
         
-        System.out.println("\n--- Displaying Created Objects ---");
+        System.out.println("\n--- Testing Interface Implementation ---");
         
-        // Display employee information
-        System.out.println("\nEmployees:");
-        System.out.println(defaultEmployee);
-        System.out.println(rideOperator);
-        System.out.println(supervisor);
+        // Create a ride that implements RideInterface
+        Ride rollerCoaster = new Ride("Thunder Bolt", "Roller Coaster", 24, true, operator);
         
-        // Display visitor information
-        System.out.println("\nVisitors:");
-        System.out.println(defaultVisitor);
-        System.out.println(familyVisitor);
-        System.out.println(seasonPassVisitor);
+        System.out.println("\nRide implements RideInterface: " + (rollerCoaster instanceof RideInterface));
+        System.out.println("Ride object: " + rollerCoaster);
         
-        // Display ride information
-        System.out.println("\nRides:");
-        System.out.println(rollerCoaster);
-        System.out.println(ferrisWheel);
-        System.out.println(waterRide);
+        System.out.println("\n--- Testing Interface Methods (Stubs) ---");
         
-        System.out.println("\n--- Testing Getter and Setter Methods ---");
+        // Test interface methods (currently stubs)
+        Visitor testVisitor = new Visitor("Test Visitor", 30, "Male", "V9999", "General", false);
         
-        // Test getter and setter methods
-        familyVisitor.setAge(33); // Update age
-        familyVisitor.setTicketType("Premium Pass");
+        System.out.println("\nCalling interface methods (stub implementations):");
+        rollerCoaster.addVisitorToQueue(testVisitor);
+        rollerCoaster.removeVisitorFromQueue();
+        rollerCoaster.printQueue();
+        rollerCoaster.addVisitorToHistory(testVisitor);
+        rollerCoaster.checkVisitorFromHistory(testVisitor);
+        rollerCoaster.numberOfVisitors();
+        rollerCoaster.printRideHistory();
+        rollerCoaster.runOneCycle();
         
-        rollerCoaster.setCapacity(30); // Increase capacity
-        rollerCoaster.setOperational(false); // Close for maintenance
+        System.out.println("\n--- Interface Benefits Demonstration ---");
         
-        System.out.println("\nUpdated Visitor: " + familyVisitor);
-        System.out.println("Updated Ride: " + rollerCoaster);
+        // Demonstrate polymorphism with interface
+        RideInterface rideInterface = rollerCoaster; // Can reference implementation through interface
         
-        System.out.println("\n=== Part 1 Demonstration Completed ===");
+        System.out.println("\nUsing Ride interface reference:");
+        rideInterface.addVisitorToQueue(testVisitor);
+        
+        // Create multiple rides that implement the same interface
+        Ride ferrisWheel = new Ride("Sky Wheel", "Ferris Wheel", 40, true, operator);
+        Ride waterRide = new Ride("Splash Mountain", "Water Ride", 12, false, operator);
+        
+        // Store different rides in an array using the interface type
+        RideInterface[] parkRides = {rollerCoaster, ferrisWheel, waterRide};
+        
+        System.out.println("\n--- Processing All Rides Using Interface ---");
+        for (RideInterface ride : parkRides) {
+            System.out.println("Processing ride through interface...");
+            ride.addVisitorToQueue(testVisitor); // Same method call, different implementations
+        }
+        
+        System.out.println("\n=== Part 2 Demonstration Completed ===");
+        System.out.println("Key concepts demonstrated:");
+        System.out.println("1. Abstract class (Person) cannot be instantiated");
+        System.out.println("2. Concrete classes (Employee, Visitor) implement abstract methods");
+        System.out.println("3. Interface (RideInterface) defines contract for ride operations");
+        System.out.println("4. Polymorphism through interface references");
+        System.out.println("5. Stub methods ready for implementation in subsequent parts");
     }
     
-    // Placeholder methods for future parts (as per assignment requirements)
+    // Placeholder methods for future parts
     public void partThree() {}
     public void partFourA() {}
     public void partFourB() {}

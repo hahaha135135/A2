@@ -1,6 +1,7 @@
 /**
  * Visitor class representing theme park visitors
  * Extends Person class to inherit common attributes
+ * Implements abstract method from Person class
  */
 public class Visitor extends Person {
     // Additional instance variables specific to visitors
@@ -84,6 +85,22 @@ public class Visitor extends Person {
      */
     public void setHasSeasonPass(boolean hasSeasonPass) {
         this.hasSeasonPass = hasSeasonPass;
+    }
+    
+    /**
+     * Implements abstract method from Person class
+     * Defines the specific role of a Visitor
+     * @return A string describing the visitor's role
+     */
+    @Override
+    public String getRole() {
+        String role = "Theme Park Visitor";
+        if (hasSeasonPass) {
+            role += " (Season Pass Holder)";
+        } else {
+            role += " (" + ticketType + " Ticket)";
+        }
+        return role;
     }
     
     /**
