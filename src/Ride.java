@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 /**
  * Ride class representing theme park rides/attractions
@@ -57,263 +58,128 @@ public class Ride implements RideInterface {
         System.out.println("Ride parameterized constructor called for: " + rideName);
     }
     
-    // Getter and Setter methods for Ride attributes
-    
-    /**
-     * Gets the ride name
-     * @return The name of the ride
-     */
-    public String getRideName() {
-        return rideName;
+    // Getter and Setter methods (same as before)
+    public String getRideName() { return rideName; }
+    public void setRideName(String rideName) { this.rideName = rideName; }
+    public String getRideType() { return rideType; }
+    public void setRideType(String rideType) { this.rideType = rideType; }
+    public int getCapacity() { return capacity; }
+    public void setCapacity(int capacity) { 
+        if (capacity > 0) this.capacity = capacity; 
+        else System.out.println("Error: Capacity must be positive");
     }
+    public boolean isOperational() { return isOperational; }
+    public void setOperational(boolean isOperational) { this.isOperational = isOperational; }
+    public Employee getOperator() { return operator; }
+    public void setOperator(Employee operator) { this.operator = operator; }
+    public Queue<Visitor> getWaitingQueue() { return waitingQueue; }
+    public LinkedList<Visitor> getRideHistory() { return rideHistory; }
     
-    /**
-     * Sets the ride name
-     * @param rideName The new ride name to set
-     */
-    public void setRideName(String rideName) {
-        this.rideName = rideName;
-    }
-    
-    /**
-     * Gets the ride type
-     * @return The type of the ride
-     */
-    public String getRideType() {
-        return rideType;
-    }
-    
-    /**
-     * Sets the ride type
-     * @param rideType The new ride type to set
-     */
-    public void setRideType(String rideType) {
-        this.rideType = rideType;
-    }
-    
-    /**
-     * Gets the ride capacity
-     * @return The maximum capacity of the ride
-     */
-    public int getCapacity() {
-        return capacity;
-    }
-    
-    /**
-     * Sets the ride capacity
-     * @param capacity The new capacity to set
-     */
-    public void setCapacity(int capacity) {
-        if (capacity > 0) {
-            this.capacity = capacity;
-        } else {
-            System.out.println("Error: Capacity must be positive");
-        }
-    }
-    
-    /**
-     * Checks if the ride is operational
-     * @return true if ride is operational, false otherwise
-     */
-    public boolean isOperational() {
-        return isOperational;
-    }
-    
-    /**
-     * Sets the operational status of the ride
-     * @param isOperational The new operational status
-     */
-    public void setOperational(boolean isOperational) {
-        this.isOperational = isOperational;
-    }
-    
-    /**
-     * Gets the assigned operator
-     * @return The employee operating this ride
-     */
-    public Employee getOperator() {
-        return operator;
-    }
-    
-    /**
-     * Assigns an operator to the ride
-     * @param operator The employee to assign as operator
-     */
-    public void setOperator(Employee operator) {
-        this.operator = operator;
-        if (operator != null) {
-            System.out.println("Operator " + operator.getName() + " assigned to ride: " + rideName);
-        } else {
-            System.out.println("Operator removed from ride: " + rideName);
-        }
-    }
-    
-    /**
-     * Gets the waiting queue (for testing purposes)
-     * @return The waiting queue of visitors
-     */
-    public Queue<Visitor> getWaitingQueue() {
-        return waitingQueue;
-    }
-    
-    /**
-     * Gets the ride history (for testing purposes)
-     * @return The ride history linked list
-     */
-    public LinkedList<Visitor> getRideHistory() {
-        return rideHistory;
-    }
-    
-    // Part 3: Queue Management Methods - FULL IMPLEMENTATION
-    
-    /**
-     * Adds a visitor to the waiting queue for the ride
-     * Implements FIFO (First-In-First-Out) principle
-     * @param visitor The visitor to add to the queue
-     */
+    // Part 3: Queue Management Methods (already implemented)
     @Override
     public void addVisitorToQueue(Visitor visitor) {
         if (visitor == null) {
             System.out.println("Error: Cannot add null visitor to queue for ride: " + rideName);
             return;
         }
-        
-        // Add visitor to the end of the queue
         boolean added = waitingQueue.offer(visitor);
-        
         if (added) {
-            System.out.println("Success: Visitor " + visitor.getName() + 
-                             " (ID: " + visitor.getVisitorId() + 
-                             ") added to queue for ride: " + rideName);
-            System.out.println("Current queue position: " + waitingQueue.size());
+            System.out.println("Success: Visitor " + visitor.getName() + " added to queue for ride: " + rideName);
         } else {
-            System.out.println("Error: Failed to add visitor " + visitor.getName() + 
-                             " to queue for ride: " + rideName);
+            System.out.println("Error: Failed to add visitor to queue for ride: " + rideName);
         }
     }
     
-    /**
-     * Removes a visitor from the waiting queue
-     * Removes the first visitor in line (FIFO principle)
-     * Typically called when a visitor takes the ride or leaves the queue
-     */
     @Override
     public void removeVisitorFromQueue() {
         if (waitingQueue.isEmpty()) {
             System.out.println("Error: Cannot remove visitor from empty queue for ride: " + rideName);
             return;
         }
-        
-        // Remove and get the first visitor in queue
         Visitor removedVisitor = waitingQueue.poll();
-        
         if (removedVisitor != null) {
-            System.out.println("Success: Visitor " + removedVisitor.getName() + 
-                             " (ID: " + removedVisitor.getVisitorId() + 
-                             ") removed from queue for ride: " + rideName);
-            System.out.println("Remaining visitors in queue: " + waitingQueue.size());
-        } else {
-            System.out.println("Error: Unexpected error while removing visitor from queue for ride: " + rideName);
+            System.out.println("Success: Visitor " + removedVisitor.getName() + " removed from queue for ride: " + rideName);
         }
     }
     
-    /**
-     * Prints all visitors currently in the waiting queue
-     * Shows the order in which visitors will be served (FIFO)
-     * Displays detailed information about each visitor
-     */
     @Override
     public void printQueue() {
         System.out.println("=== Waiting Queue for Ride: " + rideName + " ===");
-        System.out.println("Ride Type: " + rideType);
-        System.out.println("Operational: " + (isOperational ? "Yes" : "No"));
-        System.out.println("Operator: " + (operator != null ? operator.getName() : "No operator assigned"));
-        System.out.println("Total Visitors in Queue: " + waitingQueue.size());
-        System.out.println("----------------------------------------");
-        
         if (waitingQueue.isEmpty()) {
             System.out.println("The queue is currently empty.");
-            System.out.println("No visitors waiting for this ride.");
         } else {
-            System.out.println("Queue Order (First to Last):");
-            System.out.println("----------------------------");
-            
             int position = 1;
-            // Iterate through the queue without removing elements
             for (Visitor visitor : waitingQueue) {
                 System.out.println(position + ". " + visitor);
                 position++;
-            }
-            
-            // Show who is next in line
-            Visitor nextInLine = waitingQueue.peek();
-            if (nextInLine != null) {
-                System.out.println("----------------------------------------");
-                System.out.println("Next in line: " + nextInLine.getName() + 
-                                 " (ID: " + nextInLine.getVisitorId() + ")");
             }
         }
         System.out.println("========================================");
     }
     
-    // Additional queue utility methods (not in interface but useful)
+    // Part 4A: Ride History Management Methods - FULL IMPLEMENTATION
     
     /**
-     * Gets the number of visitors in the waiting queue
-     * @return The size of the waiting queue
-     */
-    public int getQueueSize() {
-        return waitingQueue.size();
-    }
-    
-    /**
-     * Checks if the waiting queue is empty
-     * @return true if queue is empty, false otherwise
-     */
-    public boolean isQueueEmpty() {
-        return waitingQueue.isEmpty();
-    }
-    
-    /**
-     * Gets the next visitor in line without removing them
-     * @return The next visitor in queue, or null if queue is empty
-     */
-    public Visitor peekNextVisitor() {
-        return waitingQueue.peek();
-    }
-    
-    /**
-     * Clears all visitors from the waiting queue
-     * Useful for ride maintenance or emergency situations
-     */
-    public void clearQueue() {
-        int clearedCount = waitingQueue.size();
-        waitingQueue.clear();
-        System.out.println("Queue cleared for ride: " + rideName + 
-                         ". Removed " + clearedCount + " visitors from queue.");
-    }
-    
-    // Part 4-7 Methods - Still stubs for now
-    
-    /**
-     * Adds a visitor to the ride history
+     * Adds a visitor to the ride history LinkedList
+     * Called when a visitor completes the ride
      * @param visitor The visitor to add to history
      */
     @Override
     public void addVisitorToHistory(Visitor visitor) {
-        // Full implementation in Part 4A
-        System.out.println("addVisitorToHistory method called - To be implemented in Part 4A");
+        if (visitor == null) {
+            System.out.println("Error: Cannot add null visitor to ride history for ride: " + rideName);
+            return;
+        }
+        
+        // Add visitor to the end of the history LinkedList
+        boolean added = rideHistory.add(visitor);
+        
+        if (added) {
+            System.out.println("Success: Visitor " + visitor.getName() + 
+                             " (ID: " + visitor.getVisitorId() + 
+                             ") added to ride history for: " + rideName);
+            System.out.println("Total visitors in history: " + rideHistory.size());
+        } else {
+            System.out.println("Error: Failed to add visitor " + visitor.getName() + 
+                             " to ride history for: " + rideName);
+        }
     }
     
     /**
-     * Checks if a visitor is in the ride history
-     * @param visitor The visitor to check
-     * @return true if visitor is in history, false otherwise
+     * Checks if a visitor is in the ride history using Iterator
+     * Demonstrates proper use of Iterator as required
+     * @param visitor The visitor to check for in history
+     * @return true if visitor is found in history, false otherwise
      */
     @Override
     public boolean checkVisitorFromHistory(Visitor visitor) {
-        // Full implementation in Part 4A
-        System.out.println("checkVisitorFromHistory method called - To be implemented in Part 4A");
+        if (visitor == null) {
+            System.out.println("Error: Cannot check null visitor in ride history for: " + rideName);
+            return false;
+        }
+        
+        if (rideHistory.isEmpty()) {
+            System.out.println("Info: Ride history is empty for: " + rideName);
+            return false;
+        }
+        
+        // Use Iterator to traverse the LinkedList (REQUIREMENT)
+        Iterator<Visitor> iterator = rideHistory.iterator();
+        int position = 1;
+        
+        System.out.println("Searching for visitor in ride history...");
+        while (iterator.hasNext()) {
+            Visitor historyVisitor = iterator.next();
+            if (historyVisitor.equals(visitor)) {
+                System.out.println("Success: Visitor " + visitor.getName() + 
+                                 " found in ride history at position: " + position);
+                return true;
+            }
+            position++;
+        }
+        
+        System.out.println("Info: Visitor " + visitor.getName() + 
+                         " not found in ride history for: " + rideName);
         return false;
     }
     
@@ -323,63 +189,121 @@ public class Ride implements RideInterface {
      */
     @Override
     public int numberOfVisitors() {
-        // Full implementation in Part 4A
-        System.out.println("numberOfVisitors method called - To be implemented in Part 4A");
-        return 0;
+        int count = rideHistory.size();
+        System.out.println("Number of visitors in ride history for " + rideName + ": " + count);
+        return count;
     }
     
     /**
-     * Prints all visitors in the ride history
+     * Prints all visitors in the ride history using Iterator
+     * MUST use Iterator as per assignment requirements
      */
     @Override
     public void printRideHistory() {
-        // Full implementation in Part 4A
-        System.out.println("printRideHistory method called - To be implemented in Part 4A");
+        System.out.println("=== Ride History for: " + rideName + " ===");
+        System.out.println("Ride Type: " + rideType);
+        System.out.println("Total Visitors: " + rideHistory.size());
+        System.out.println("----------------------------------------");
+        
+        if (rideHistory.isEmpty()) {
+            System.out.println("No visitors have taken this ride yet.");
+        } else {
+            System.out.println("Visitors who have taken the ride:");
+            System.out.println("-------------------------------");
+            
+            // USE ITERATOR as required - no marks without it!
+            Iterator<Visitor> iterator = rideHistory.iterator();
+            int position = 1;
+            
+            while (iterator.hasNext()) {
+                Visitor visitor = iterator.next();
+                System.out.println(position + ". " + visitor);
+                position++;
+            }
+        }
+        System.out.println("========================================");
     }
     
-    /**
-     * Runs the ride for one cycle
-     */
-    @Override
-    public void runOneCycle() {
-        // Full implementation in Part 5
-        System.out.println("runOneCycle method called - To be implemented in Part 5");
-    }
+    // Part 4B: Sorting Implementation
     
     /**
-     * Exports ride history to a file
-     * @param filename The name of the file to export to
-     */
-    @Override
-    public void exportRideHistory(String filename) {
-        // Full implementation in Part 6
-        System.out.println("exportRideHistory method called - To be implemented in Part 6");
-    }
-    
-    /**
-     * Imports ride history from a file
-     * @param filename The name of the file to import from
-     */
-    @Override
-    public void importRideHistory(String filename) {
-        // Full implementation in Part 7
-        System.out.println("importRideHistory method called - To be implemented in Part 7");
-    }
-    
-    /**
-     * Sorts the ride history using the provided comparator
-     * @param comparator The comparator to use for sorting
+     * Sorts the ride history using the provided Comparator
+     * Uses Collections.sort() with custom Comparator
+     * @param comparator The comparator to use for sorting visitors
      */
     @Override
     public void sortRideHistory(Comparator<Visitor> comparator) {
-        // Full implementation in Part 4B
-        System.out.println("sortRideHistory method called - To be implemented in Part 4B");
+        if (rideHistory.isEmpty()) {
+            System.out.println("Info: Cannot sort empty ride history for: " + rideName);
+            return;
+        }
+        
+        if (comparator == null) {
+            System.out.println("Error: Cannot sort with null comparator for: " + rideName);
+            return;
+        }
+        
+        System.out.println("Sorting ride history for: " + rideName);
+        System.out.println("Before sorting: " + rideHistory.size() + " visitors");
+        
+        // Sort the LinkedList using Collections.sort() with Comparator
+        Collections.sort(rideHistory, comparator);
+        
+        System.out.println("Success: Ride history sorted for: " + rideName);
+        System.out.println("After sorting: " + rideHistory.size() + " visitors");
+    }
+    
+    // Additional utility methods for ride history
+    
+    /**
+     * Gets the most recent visitor added to ride history
+     * @return The most recent visitor, or null if history is empty
+     */
+    public Visitor getMostRecentVisitor() {
+        if (rideHistory.isEmpty()) {
+            return null;
+        }
+        return rideHistory.getLast();
     }
     
     /**
-     * Returns a string representation of the ride
-     * @return Formatted string with ride details
+     * Gets the first visitor in ride history (chronologically first)
+     * @return The first visitor, or null if history is empty
      */
+    public Visitor getFirstVisitor() {
+        if (rideHistory.isEmpty()) {
+            return null;
+        }
+        return rideHistory.getFirst();
+    }
+    
+    /**
+     * Clears all visitors from ride history
+     * Useful for resetting ride statistics
+     */
+    public void clearRideHistory() {
+        int count = rideHistory.size();
+        rideHistory.clear();
+        System.out.println("Ride history cleared for: " + rideName + 
+                         ". Removed " + count + " visitors from history.");
+    }
+    
+    // Part 5-7 Methods - Still stubs for now
+    @Override
+    public void runOneCycle() {
+        System.out.println("runOneCycle method called - To be implemented in Part 5");
+    }
+    
+    @Override
+    public void exportRideHistory(String filename) {
+        System.out.println("exportRideHistory method called - To be implemented in Part 6");
+    }
+    
+    @Override
+    public void importRideHistory(String filename) {
+        System.out.println("importRideHistory method called - To be implemented in Part 7");
+    }
+    
     @Override
     public String toString() {
         String operatorInfo = (operator != null) ? operator.getName() : "No operator assigned";
