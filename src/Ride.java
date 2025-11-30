@@ -14,7 +14,7 @@ public class Ride implements RideInterface {
     private Employee operator; // Employee assigned to operate this ride
     
     // Collections for queue and history management
-    private Queue<Visitor> waitingQueue;     // For Part 3 - Waiting line
+    private Queue<Visitor> waitingQueue;     // For Part 3 - Waiting line (FIFO)
     private LinkedList<Visitor> rideHistory; // For Part 4 - Ride history
     
     /**
@@ -164,36 +164,136 @@ public class Ride implements RideInterface {
         return rideHistory;
     }
     
-    // Interface Method Implementations - Stubs for now
-    // Full implementation will be done in Parts 3-7
+    // Part 3: Queue Management Methods - FULL IMPLEMENTATION
     
     /**
-     * Adds a visitor to the waiting queue
+     * Adds a visitor to the waiting queue for the ride
+     * Implements FIFO (First-In-First-Out) principle
      * @param visitor The visitor to add to the queue
      */
     @Override
     public void addVisitorToQueue(Visitor visitor) {
-        // Full implementation in Part 3
-        System.out.println("addVisitorToQueue method called - To be implemented in Part 3");
+        if (visitor == null) {
+            System.out.println("Error: Cannot add null visitor to queue for ride: " + rideName);
+            return;
+        }
+        
+        // Add visitor to the end of the queue
+        boolean added = waitingQueue.offer(visitor);
+        
+        if (added) {
+            System.out.println("Success: Visitor " + visitor.getName() + 
+                             " (ID: " + visitor.getVisitorId() + 
+                             ") added to queue for ride: " + rideName);
+            System.out.println("Current queue position: " + waitingQueue.size());
+        } else {
+            System.out.println("Error: Failed to add visitor " + visitor.getName() + 
+                             " to queue for ride: " + rideName);
+        }
     }
     
     /**
      * Removes a visitor from the waiting queue
+     * Removes the first visitor in line (FIFO principle)
+     * Typically called when a visitor takes the ride or leaves the queue
      */
     @Override
     public void removeVisitorFromQueue() {
-        // Full implementation in Part 3
-        System.out.println("removeVisitorFromQueue method called - To be implemented in Part 3");
+        if (waitingQueue.isEmpty()) {
+            System.out.println("Error: Cannot remove visitor from empty queue for ride: " + rideName);
+            return;
+        }
+        
+        // Remove and get the first visitor in queue
+        Visitor removedVisitor = waitingQueue.poll();
+        
+        if (removedVisitor != null) {
+            System.out.println("Success: Visitor " + removedVisitor.getName() + 
+                             " (ID: " + removedVisitor.getVisitorId() + 
+                             ") removed from queue for ride: " + rideName);
+            System.out.println("Remaining visitors in queue: " + waitingQueue.size());
+        } else {
+            System.out.println("Error: Unexpected error while removing visitor from queue for ride: " + rideName);
+        }
     }
     
     /**
-     * Prints all visitors in the waiting queue
+     * Prints all visitors currently in the waiting queue
+     * Shows the order in which visitors will be served (FIFO)
+     * Displays detailed information about each visitor
      */
     @Override
     public void printQueue() {
-        // Full implementation in Part 3
-        System.out.println("printQueue method called - To be implemented in Part 3");
+        System.out.println("=== Waiting Queue for Ride: " + rideName + " ===");
+        System.out.println("Ride Type: " + rideType);
+        System.out.println("Operational: " + (isOperational ? "Yes" : "No"));
+        System.out.println("Operator: " + (operator != null ? operator.getName() : "No operator assigned"));
+        System.out.println("Total Visitors in Queue: " + waitingQueue.size());
+        System.out.println("----------------------------------------");
+        
+        if (waitingQueue.isEmpty()) {
+            System.out.println("The queue is currently empty.");
+            System.out.println("No visitors waiting for this ride.");
+        } else {
+            System.out.println("Queue Order (First to Last):");
+            System.out.println("----------------------------");
+            
+            int position = 1;
+            // Iterate through the queue without removing elements
+            for (Visitor visitor : waitingQueue) {
+                System.out.println(position + ". " + visitor);
+                position++;
+            }
+            
+            // Show who is next in line
+            Visitor nextInLine = waitingQueue.peek();
+            if (nextInLine != null) {
+                System.out.println("----------------------------------------");
+                System.out.println("Next in line: " + nextInLine.getName() + 
+                                 " (ID: " + nextInLine.getVisitorId() + ")");
+            }
+        }
+        System.out.println("========================================");
     }
+    
+    // Additional queue utility methods (not in interface but useful)
+    
+    /**
+     * Gets the number of visitors in the waiting queue
+     * @return The size of the waiting queue
+     */
+    public int getQueueSize() {
+        return waitingQueue.size();
+    }
+    
+    /**
+     * Checks if the waiting queue is empty
+     * @return true if queue is empty, false otherwise
+     */
+    public boolean isQueueEmpty() {
+        return waitingQueue.isEmpty();
+    }
+    
+    /**
+     * Gets the next visitor in line without removing them
+     * @return The next visitor in queue, or null if queue is empty
+     */
+    public Visitor peekNextVisitor() {
+        return waitingQueue.peek();
+    }
+    
+    /**
+     * Clears all visitors from the waiting queue
+     * Useful for ride maintenance or emergency situations
+     */
+    public void clearQueue() {
+        int clearedCount = waitingQueue.size();
+        waitingQueue.clear();
+        System.out.println("Queue cleared for ride: " + rideName + 
+                         ". Removed " + clearedCount + " visitors from queue.");
+    }
+    
+    // Part 4-7 Methods - Still stubs for now
     
     /**
      * Adds a visitor to the ride history
