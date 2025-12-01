@@ -10,220 +10,168 @@ public class AssignmentTwo {
      */
     public static void main(String[] args) {
         System.out.println("=== PROG2004 Assignment 2 - Theme Park Management System ===");
-        System.out.println("=== Part 4: Ride History and Sorting Demonstration ===\n");
+        System.out.println("=== Part 5: Run a Ride Cycle Demonstration ===\n");
         
         AssignmentTwo assignment = new AssignmentTwo();
-        
-        // Run both Part 4A and Part 4B demonstrations
-        assignment.partFourA();
-        System.out.println("\n" + "=".repeat(60) + "\n");
-        assignment.partFourB();
+        assignment.partFive();
     }
     
     /**
-     * Part 4A: Demonstrates ride history functionality with LinkedList
-     * Shows adding visitors to history, checking existence, and printing with Iterator
+     * Part 5: Demonstrates running ride cycles with queue and history integration
+     * Shows the complete flow from queue to history through ride cycles
      */
-    public void partFourA() {
-        System.out.println("🚀 STARTING PART 4A DEMONSTRATION: RIDE HISTORY");
-        System.out.println("===============================================\n");
+    public void partFive() {
+        System.out.println("STARTING PART 5 DEMONSTRATION: RUN A RIDE CYCLE");
+        System.out.println("==================================================\n");
         
-        // Step 1: Create ride operator and ride
-        System.out.println("Step 1: Setting Up Ride and Operator");
-        System.out.println("-----------------------------------");
-        Employee operator = new Employee("Sarah HistoryKeeper", 29, "Female", 
-                                       "E4001", "Ride Operations", "History Manager");
-        Ride waterRide = new Ride("Splash Adventure", "Water Ride", 16, true, operator);
-        System.out.println("Ride created: " + waterRide.getRideName() + "\n");
+        // Step 1: Create ride operator and ride with specific maxRider
+        System.out.println("Step 1: Setting Up Ride with Operator and Max Rider Limit");
+        System.out.println("-------------------------------------------------------");
+        Employee operator = new Employee("Alex CycleMaster", 31, "Male", 
+                                       "E5001", "Ride Operations", "Cycle Operator");
         
-        // Step 2: Create 5+ visitors for ride history
-        System.out.println("Step 2: Creating Visitors for Ride History");
-        System.out.println("-----------------------------------------");
+        // Create a roller coaster that can take 4 riders per cycle
+        Ride rollerCoaster = new Ride("Thunder Cyclone", "Roller Coaster", 24, true, operator, 4);
+        System.out.println("Ride created: " + rollerCoaster.getRideName());
+        System.out.println("Max riders per cycle: " + rollerCoaster.getMaxRider() + "\n");
+        
+        // Step 2: Create 10+ visitors for the queue
+        System.out.println("Step 2: Creating 10+ Visitors for Queue");
+        System.out.println("--------------------------------------");
         
         Visitor[] visitors = {
-            new Visitor("Olivia Ocean", 22, "Female", "V4001", "Premium", false),
-            new Visitor("Liam Lake", 45, "Male", "V4002", "Standard", true),
-            new Visitor("Sophia Stream", 19, "Female", "V4003", "Student", false),
-            new Visitor("Noah Navy", 33, "Male", "V4004", "VIP", true),
-            new Visitor("Ava Aqua", 28, "Female", "V4005", "Standard", false),
-            new Visitor("William Wave", 15, "Male", "V4006", "Child", true)  // Extra visitor
+            new Visitor("Visitor01-First", 20, "Male", "V5001", "Standard", false),
+            new Visitor("Visitor02-Second", 25, "Female", "V5002", "Premium", true),
+            new Visitor("Visitor03-Third", 18, "Male", "V5003", "Student", false),
+            new Visitor("Visitor04-Fourth", 30, "Female", "V5004", "VIP", true),
+            new Visitor("Visitor05-Fifth", 22, "Male", "V5005", "Standard", false),
+            new Visitor("Visitor06-Sixth", 28, "Female", "V5006", "Premium", false),
+            new Visitor("Visitor07-Seventh", 35, "Male", "V5007", "Standard", true),
+            new Visitor("Visitor08-Eighth", 19, "Female", "V5008", "Student", false),
+            new Visitor("Visitor09-Ninth", 40, "Male", "V5009", "VIP", true),
+            new Visitor("Visitor10-Tenth", 26, "Female", "V5010", "Standard", false),
+            new Visitor("Visitor11-Eleventh", 32, "Male", "V5011", "Premium", false), // Extra
+            new Visitor("Visitor12-Twelfth", 23, "Female", "V5012", "Standard", true)  // Extra
         };
         
-        System.out.println("Created " + visitors.length + " visitors for ride history.\n");
+        System.out.println("Created " + visitors.length + " visitors for the queue.\n");
         
-        // Step 3: Add all visitors to ride history
-        System.out.println("Step 3: Adding Visitors to Ride History");
-        System.out.println("--------------------------------------");
+        // Step 3: Add all visitors to the queue
+        System.out.println("Step 3: Adding All Visitors to Queue");
+        System.out.println("-----------------------------------");
         for (Visitor visitor : visitors) {
-            waterRide.addVisitorToHistory(visitor);
+            rollerCoaster.addVisitorToQueue(visitor);
         }
         System.out.println(); // Empty line for readability
         
-        // Step 4: Check if specific visitors are in history
-        System.out.println("Step 4: Checking Visitors in History");
+        // Step 4: Print initial queue state
+        System.out.println("Step 4: Printing Initial Queue State");
         System.out.println("-----------------------------------");
-        waterRide.checkVisitorFromHistory(visitors[0]); // Should be found
-        waterRide.checkVisitorFromHistory(visitors[2]); // Should be found
+        rollerCoaster.printQueue();
+        System.out.println("Initial queue size: " + rollerCoaster.getWaitingQueue().size());
+        System.out.println("Initial history size: " + rollerCoaster.getRideHistory().size());
+        System.out.println("Initial cycles run: " + rollerCoaster.getNumOfCycles() + "\n");
         
-        // Check for a visitor not in history
-        Visitor unknownVisitor = new Visitor("Unknown Person", 99, "Unknown", "V9999", "Test", false);
-        waterRide.checkVisitorFromHistory(unknownVisitor); // Should not be found
-        System.out.println(); // Empty line for readability
+        // Step 5: Run one complete cycle
+        System.out.println("Step 5: Running One Complete Ride Cycle");
+        System.out.println("--------------------------------------");
+        rollerCoaster.runOneCycle();
         
-        // Step 5: Get number of visitors in history
-        System.out.println("Step 5: Counting Visitors in History");
-        System.out.println("-----------------------------------");
-        int count = waterRide.numberOfVisitors();
-        System.out.println("Verified count: " + count + " visitors\n");
+        // Step 6: Print queue after first cycle
+        System.out.println("Step 6: Printing Queue After First Cycle");
+        System.out.println("--------------------------------------");
+        rollerCoaster.printQueue();
+        System.out.println("Queue size after cycle 1: " + rollerCoaster.getWaitingQueue().size() + "\n");
         
-        // Step 6: Print ride history using Iterator (REQUIRED)
-        System.out.println("Step 6: Printing Ride History (Using Iterator)");
+        // Step 7: Print ride history after first cycle
+        System.out.println("Step 7: Printing Ride History After First Cycle");
         System.out.println("---------------------------------------------");
-        waterRide.printRideHistory();
-        System.out.println(); // Empty line for readability
+        rollerCoaster.printRideHistory();
+        System.out.println("History size after cycle 1: " + rollerCoaster.getRideHistory().size() + "\n");
         
-        // Step 7: Test edge cases
-        System.out.println("Step 7: Testing Edge Cases");
-        System.out.println("--------------------------");
+        // Step 8: Run second cycle to show continued operation
+        System.out.println("Step 8: Running Second Ride Cycle");
+        System.out.println("-------------------------------");
+        rollerCoaster.runOneCycle();
         
-        // Test adding null visitor
-        System.out.println("Testing null visitor addition:");
-        waterRide.addVisitorToHistory(null);
+        // Step 9: Show state after second cycle
+        System.out.println("Step 9: State After Second Cycle");
+        System.out.println("-------------------------------");
+        System.out.println("Queue size: " + rollerCoaster.getWaitingQueue().size());
+        System.out.println("History size: " + rollerCoaster.getRideHistory().size());
+        System.out.println("Total cycles run: " + rollerCoaster.getNumOfCycles() + "\n");
         
-        // Test checking null visitor
-        System.out.println("\nTesting null visitor check:");
-        waterRide.checkVisitorFromHistory(null);
+        // Step 10: Run multiple cycles to demonstrate continuous operation
+        System.out.println("Step 10: Running Multiple Cycles Until Queue is Empty");
+        System.out.println("---------------------------------------------------");
         
-        // Test with empty history (create new ride)
-        System.out.println("\nTesting with empty history:");
-        Ride emptyRide = new Ride("Empty Ride", "Test", 10, true, operator);
-        emptyRide.checkVisitorFromHistory(visitors[0]);
-        emptyRide.printRideHistory();
+        int additionalCycles = 0;
+        while (!rollerCoaster.getWaitingQueue().isEmpty()) {
+            rollerCoaster.runOneCycle();
+            additionalCycles++;
+            
+            // Safety break to prevent infinite loop
+            if (additionalCycles > 10) {
+                System.out.println("Safety break: Too many cycles, breaking loop");
+                break;
+            }
+        }
         
-        System.out.println("\n🎉 PART 4A DEMONSTRATION COMPLETED SUCCESSFULLY!");
-        System.out.println("===============================================");
-    }
-    
-    /**
-     * Part 4B: Demonstrates sorting ride history using Comparator
-     * Shows sorting functionality with custom comparison logic
-     */
-    public void partFourB() {
-        System.out.println("🚀 STARTING PART 4B DEMONSTRATION: SORTING RIDE HISTORY");
-        System.out.println("======================================================\n");
+        System.out.println("Ran " + additionalCycles + " additional cycles to clear queue\n");
         
-        // Step 1: Create ride operator and ride
-        System.out.println("Step 1: Setting Up Ride for Sorting Demonstration");
-        System.out.println("------------------------------------------------");
-        Employee operator = new Employee("Mike Sorter", 34, "Male", 
-                                       "E4002", "Ride Operations", "Sorting Specialist");
-        Ride ferrisWheel = new Ride("Sky High Wheel", "Ferris Wheel", 30, true, operator);
-        System.out.println("Ride created: " + ferrisWheel.getRideName() + "\n");
+        // Step 11: Show final state
+        System.out.println("Step 11: Final State After All Cycles");
+        System.out.println("-----------------------------------");
+        System.out.println("Final queue size: " + rollerCoaster.getWaitingQueue().size());
+        System.out.println("Final history size: " + rollerCoaster.getRideHistory().size());
+        System.out.println("Final cycles run: " + rollerCoaster.getNumOfCycles());
+        System.out.println("\n" + rollerCoaster.getRideStatistics() + "\n");
         
-        // Step 2: Create visitors with varied attributes for sorting
-        System.out.println("Step 2: Creating Visitors with Varied Attributes");
+        // Step 12: Test error conditions and edge cases
+        System.out.println("Step 12: Testing Error Conditions and Edge Cases");
         System.out.println("-----------------------------------------------");
         
-        Visitor[] visitors = {
-            new Visitor("Zoe Zenith", 15, "Female", "V4010", "Child", false),
-            new Visitor("Adam Alpha", 45, "Male", "V4011", "Premium", true),
-            new Visitor("Charlie Middle", 25, "Male", "V4012", "Standard", false),
-            new Visitor("Betta Beta", 15, "Female", "V4013", "Student", true), // Same age as Zoe
-            new Visitor("David Delta", 32, "Male", "V4014", "VIP", false),
-            new Visitor("Eve Epsilon", 25, "Female", "V4015", "Standard", true) // Same age as Charlie
-        };
+        // Test 12a: Try to run cycle with no operator
+        System.out.println("Test 12a: Running cycle with NO OPERATOR");
+        Ride noOperatorRide = new Ride("Unmanned Ride", "Test", 10, true, null, 2);
+        noOperatorRide.addVisitorToQueue(new Visitor("Test Visitor", 25, "Male", "VT001", "Test", false));
+        noOperatorRide.runOneCycle();
         
-        System.out.println("Created " + visitors.length + " visitors with varied ages and ticket types.\n");
+        // Test 12b: Try to run cycle with empty queue
+        System.out.println("\nTest 12b: Running cycle with EMPTY QUEUE");
+        Ride emptyQueueRide = new Ride("Empty Ride", "Test", 10, true, operator, 2);
+        emptyQueueRide.runOneCycle();
         
-        // Step 3: Add visitors to ride history (unsorted order)
-        System.out.println("Step 3: Adding Visitors to History (Unsorted Order)");
-        System.out.println("--------------------------------------------------");
-        // Add in specific order to demonstrate sorting
-        ferrisWheel.addVisitorToHistory(visitors[1]); // Adam, 45
-        ferrisWheel.addVisitorToHistory(visitors[0]); // Zoe, 15
-        ferrisWheel.addVisitorToHistory(visitors[3]); // Betta, 15 (same age as Zoe)
-        ferrisWheel.addVisitorToHistory(visitors[2]); // Charlie, 25
-        ferrisWheel.addVisitorToHistory(visitors[5]); // Eve, 25 (same age as Charlie)
-        ferrisWheel.addVisitorToHistory(visitors[4]); // David, 32
-        System.out.println(); // Empty line for readability
+        // Test 12c: Try to run cycle with non-operational ride
+        System.out.println("\nTest 12c: Running cycle with NON-OPERATIONAL RIDE");
+        Ride brokenRide = new Ride("Broken Ride", "Test", 10, false, operator, 2);
+        brokenRide.addVisitorToQueue(new Visitor("Test Visitor", 25, "Male", "VT002", "Test", false));
+        brokenRide.runOneCycle();
         
-        // Step 4: Print unsorted history
-        System.out.println("Step 4: Printing UNSORTED Ride History");
-        System.out.println("-------------------------------------");
-        ferrisWheel.printRideHistory();
-        System.out.println(); // Empty line for readability
-        
-        // Step 5: Create comparator and sort the history
-        System.out.println("Step 5: Sorting Ride History with Comparator");
-        System.out.println("-------------------------------------------");
-        VisitorComparator comparator = new VisitorComparator();
-        System.out.println("Using comparator: Age (ascending) -> Name (alphabetical)");
-        ferrisWheel.sortRideHistory(comparator);
-        System.out.println(); // Empty line for readability
-        
-        // Step 6: Print sorted history
-        System.out.println("Step 6: Printing SORTED Ride History");
-        System.out.println("-----------------------------------");
-        ferrisWheel.printRideHistory();
-        System.out.println(); // Empty line for readability
-        
-        // Step 7: Demonstrate alternative comparators
-        System.out.println("Step 7: Demonstrating Alternative Comparators");
-        System.out.println("--------------------------------------------");
-        
-        // Create a new ride for alternative sorting demonstration
-        Ride testRide = new Ride("Test Ride", "Demo", 20, true, operator);
-        
-        // Add same visitors but in different order
-        for (Visitor visitor : visitors) {
-            testRide.addVisitorToHistory(visitor);
+        // Test 12d: Test with very small maxRider (1)
+        System.out.println("\nTest 12d: Running cycles with MAX RIDER = 1");
+        Ride singleRiderRide = new Ride("Single Rider", "Test", 5, true, operator, 1);
+        for (int i = 0; i < 3; i++) {
+            singleRiderRide.addVisitorToQueue(new Visitor("Single" + i, 20 + i, "Female", "VS00" + i, "Test", false));
         }
+        singleRiderRide.runOneCycle();
+        singleRiderRide.runOneCycle();
+        System.out.println("Queue after 2 cycles: " + singleRiderRide.getWaitingQueue().size());
         
-        System.out.println("\nOriginal order:");
-        testRide.printRideHistory();
-        
-        // Sort by ticket type and age
-        System.out.println("\nSorting by Ticket Type and Age:");
-        VisitorComparator.ByTicketTypeAndAge ticketComparator = new VisitorComparator.ByTicketTypeAndAge();
-        testRide.sortRideHistory(ticketComparator);
-        testRide.printRideHistory();
-        
-        // Sort by season pass and name
-        System.out.println("\nSorting by Season Pass and Name:");
-        VisitorComparator.BySeasonPassAndName passComparator = new VisitorComparator.BySeasonPassAndName();
-        testRide.sortRideHistory(passComparator);
-        testRide.printRideHistory();
-        
-        // Step 8: Test edge cases for sorting
-        System.out.println("Step 8: Testing Sorting Edge Cases");
-        System.out.println("----------------------------------");
-        
-        // Test sorting empty history
-        System.out.println("Testing sorting empty history:");
-        Ride emptyRide = new Ride("Empty Ride", "Test", 10, true, operator);
-        emptyRide.sortRideHistory(comparator);
-        
-        // Test sorting with null comparator
-        System.out.println("\nTesting sorting with null comparator:");
-        try {
-            ferrisWheel.sortRideHistory(null);
-        } catch (Exception e) {
-            System.out.println("Caught exception: " + e.getMessage());
-        }
-        
-        System.out.println("\n🎉 PART 4B DEMONSTRATION COMPLETED SUCCESSFULLY!");
+        System.out.println("\nPART 5 DEMONSTRATION COMPLETED SUCCESSFULLY!");
         System.out.println("===============================================");
         System.out.println("Summary:");
-        System.out.println("- Created custom Comparator for Visitor objects");
-        System.out.println("- Implemented multi-criteria sorting (age + name)");
-        System.out.println("- Demonstrated Collections.sort() with Comparator");
-        System.out.println("- Showed before/after sorting results");
-        System.out.println("- Tested alternative sorting strategies");
-        System.out.println("- Handled edge cases appropriately");
+        System.out.println("- Created ride with maxRider = 4 and operator");
+        System.out.println("- Added " + visitors.length + " visitors to queue");
+        System.out.println("- Ran multiple ride cycles successfully");
+        System.out.println("- Demonstrated queue to history transition");
+        System.out.println("- Showed cycle counting and statistics");
+        System.out.println("- Tested all error conditions and edge cases");
+        System.out.println("- Final: " + rollerCoaster.getNumOfCycles() + " cycles run, " + 
+                         rollerCoaster.getRideHistory().size() + " visitors served");
     }
     
     // Placeholder methods for future parts
-    public void partFive() {}
     public void partSix() {}
     public void partSeven() {}
 }
