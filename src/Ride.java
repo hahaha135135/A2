@@ -84,17 +84,15 @@ public class Ride implements RideInterface {
     public void setOperator(Employee operator) { this.operator = operator; }
     public Queue<Visitor> getWaitingQueue() { return waitingQueue; }
     public LinkedList<Visitor> getRideHistory() { return rideHistory; }
-    
-    // Part 5: Getter and Setter for ride operation variables
     public int getMaxRider() { return maxRider; }
     public void setMaxRider(int maxRider) { 
         if (maxRider > 0) this.maxRider = maxRider; 
         else System.out.println("Error: maxRider must be positive");
     }
     public int getNumOfCycles() { return numOfCycles; }
-    // Note: No setter for numOfCycles - it should only be incremented by runOneCycle()
     
-    // Part 3: Queue Management Methods
+    // Part 3-5 Methods (implemented in previous parts)
+    
     @Override
     public void addVisitorToQueue(Visitor visitor) {
         if (visitor == null) {
@@ -136,7 +134,6 @@ public class Ride implements RideInterface {
         System.out.println("========================================");
     }
     
-    // Part 4: Ride History Management Methods
     @Override
     public void addVisitorToHistory(Visitor visitor) {
         if (visitor == null) {
@@ -195,164 +192,228 @@ public class Ride implements RideInterface {
         System.out.println("Success: Ride history sorted for: " + rideName);
     }
     
-    // Part 5: Run One Cycle Method - FULL IMPLEMENTATION
-    
-    /**
-     * Runs the ride for one cycle according to assignment requirements:
-     * 1. Checks if operator is assigned
-     * 2. Checks if there are waiting visitors
-     * 3. Takes visitors from queue (up to maxRider)
-     * 4. Adds them to ride history
-     * 5. Updates cycle count
-     */
     @Override
     public void runOneCycle() {
         System.out.println("\nATTEMPTING TO RUN RIDE CYCLE: " + rideName);
         System.out.println("==========================================");
         
-        // Check 1: Verify operator is assigned
         if (operator == null) {
             System.out.println("ERROR: Cannot run ride - No operator assigned to: " + rideName);
-            System.out.println("Please assign an operator before running the ride.");
             return;
         }
         
-        // Check 2: Verify there are waiting visitors
         if (waitingQueue.isEmpty()) {
             System.out.println("ERROR: Cannot run ride - No visitors in queue for: " + rideName);
-            System.out.println("Visitors must be in the queue to run the ride.");
             return;
         }
         
-        // Check 3: Verify ride is operational
         if (!isOperational) {
             System.out.println("ERROR: Cannot run ride - " + rideName + " is not operational");
-            System.out.println("The ride must be marked as operational to run.");
             return;
         }
         
-        // All checks passed - proceed with ride cycle
-        System.out.println("SUCCESS: All pre-flight checks passed!");
-        System.out.println("Operator: " + operator.getName());
-        System.out.println("Visitors in queue: " + waitingQueue.size());
-        System.out.println("Max riders per cycle: " + maxRider);
-        
-        // Calculate how many visitors to take in this cycle
         int visitorsToTake = Math.min(maxRider, waitingQueue.size());
-        System.out.println("\nSTARTING RIDE CYCLE - Taking " + visitorsToTake + " visitors");
-        System.out.println("----------------------------------------");
+        System.out.println("STARTING RIDE CYCLE - Taking " + visitorsToTake + " visitors");
         
-        List<Visitor> ridersThisCycle = new ArrayList<>();
-        
-        // Process visitors for this cycle
         for (int i = 0; i < visitorsToTake; i++) {
-            Visitor rider = waitingQueue.poll(); // Remove from front of queue
+            Visitor rider = waitingQueue.poll();
             if (rider != null) {
-                // Add to ride history
                 rideHistory.add(rider);
-                ridersThisCycle.add(rider);
-                
-                System.out.println("SUCCESS: " + rider.getName() + 
-                                 " (ID: " + rider.getVisitorId() + 
-                                 ") has taken the ride!");
+                System.out.println("SUCCESS: " + rider.getName() + " has taken the ride!");
             }
         }
         
-        // Update cycle count
         numOfCycles++;
-        
-        // Print cycle summary
-        System.out.println("----------------------------------------");
         System.out.println("RIDE CYCLE COMPLETED SUCCESSFULLY!");
-        System.out.println("Ride: " + rideName);
         System.out.println("Cycle Number: " + numOfCycles);
-        System.out.println("Visitors served this cycle: " + ridersThisCycle.size());
         System.out.println("Remaining in queue: " + waitingQueue.size());
         System.out.println("Total in ride history: " + rideHistory.size());
-        
-        // Show who rode in this cycle
-        if (!ridersThisCycle.isEmpty()) {
-            System.out.println("\nVisitors who rode this cycle:");
-            for (int i = 0; i < ridersThisCycle.size(); i++) {
-                System.out.println("  " + (i + 1) + ". " + ridersThisCycle.get(i).getName());
-            }
-        }
-        
         System.out.println("==========================================\n");
     }
     
-    // Additional utility methods for ride operation
+    // Part 6: Writing to File - FULL IMPLEMENTATION
     
     /**
-     * Gets detailed ride operation statistics
-     * @return String with ride operation details
+     * Exports ride history to a CSV file
+     * Each visitor's details are written on a separate line in comma-separated format
+     * Implements proper exception handling as required
+     * 
+     * @param filename The name of the file to write to
      */
-    public String getRideStatistics() {
-        return String.format(
-            "Ride Statistics for %s:\n" +
-            "  - Total Cycles Run: %d\n" +
-            "  - Max Riders per Cycle: %d\n" +
-            "  - Current Queue Size: %d\n" +
-            "  - Total Visitors Served: %d\n" +
-            "  - Operator: %s\n" +
-            "  - Operational Status: %s",
-            rideName, numOfCycles, maxRider, waitingQueue.size(), 
-            rideHistory.size(), 
-            (operator != null ? operator.getName() : "No operator"),
-            (isOperational ? "Operational" : "Maintenance")
-        );
-    }
+    @Override
+public void exportRideHistory(String filename) {
+    System.out.println("ATTEMPTING TO EXPORT RIDE HISTORY TO FILE: " + filename);
+    System.out.println("Ride: " + rideName);
+    System.out.println("Number of visitors to export: " + rideHistory.size());
     
-    /**
-     * Simulates running multiple cycles at once
-     * @param cycles Number of cycles to run
-     */
-    public void runMultipleCycles(int cycles) {
-        if (cycles <= 0) {
-            System.out.println("Error: Number of cycles must be positive");
-            return;
+    PrintWriter writer = null;
+    try {
+        writer = new PrintWriter(new FileWriter(filename));
+        
+        // Write header lines
+        writer.println("# Ride History Export for: " + rideName);
+        writer.println("# Export Date: " + new Date());
+        writer.println("# Format: Name,Age,Gender,VisitorID,TicketType,HasSeasonPass");
+        
+        int exportCount = 0;
+        for (Visitor visitor : rideHistory) {
+            String line = String.format("%s,%d,%s,%s,%s,%b",
+                escapeCommas(visitor.getName()),
+                visitor.getAge(),
+                escapeCommas(visitor.getGender()),
+                escapeCommas(visitor.getVisitorId()),
+                escapeCommas(visitor.getTicketType()),
+                visitor.hasSeasonPass());
+            
+            writer.println(line);
+            exportCount++;
         }
         
-        System.out.println("ATTEMPTING TO RUN " + cycles + " CYCLES FOR: " + rideName);
-        int successfulCycles = 0;
+        writer.flush();
+        System.out.println("SUCCESS: Exported " + exportCount + " visitors to file: " + filename);
         
-        for (int i = 1; i <= cycles; i++) {
-            System.out.println("\n--- Cycle " + i + " of " + cycles + " ---");
-            
-            // Store current state to check if cycle actually ran
-            int queueSizeBefore = waitingQueue.size();
-            runOneCycle();
-            int queueSizeAfter = waitingQueue.size();
-            
-            // Check if cycle actually processed visitors
-            if (queueSizeBefore > queueSizeAfter) {
-                successfulCycles++;
-            } else {
-                System.out.println("Cycle " + i + " did not process any visitors - stopping");
-                break;
+    } catch (FileNotFoundException e) {
+        System.out.println("ERROR: File not found or cannot be created: " + filename);
+        System.out.println("Error details: " + e.getMessage());
+        
+    } catch (SecurityException e) {
+        System.out.println("ERROR: Security exception - No permission to write to file: " + filename);
+        System.out.println("Error details: " + e.getMessage());
+        
+    } catch (IOException e) {
+        System.out.println("ERROR: IO Exception occurred during export!");
+        System.out.println("Error type: " + e.getClass().getName());
+        System.out.println("Error message: " + e.getMessage());
+        
+    } catch (Exception e) {
+        System.out.println("ERROR: Unexpected error during export!");
+        System.out.println("Error type: " + e.getClass().getName());
+        System.out.println("Error message: " + e.getMessage());
+        
+    } finally {
+        if (writer != null) {
+            try {
+                writer.close();
+                System.out.println("File writer closed successfully.");
+            } catch (Exception e) {
+                System.out.println("WARNING: Error closing file writer: " + e.getMessage());
             }
         }
-        
-        System.out.println("\nCompleted " + successfulCycles + " out of " + cycles + " requested cycles");
+    }
+    
+    System.out.println("Export process completed.\n");
+}
+    
+    /**
+     * Helper method to escape commas in string values
+     * Replaces commas with a placeholder to avoid CSV parsing issues
+     * 
+     * @param input The input string that may contain commas
+     * @return The string with commas replaced by semicolons
+     */
+    private String escapeCommas(String input) {
+        if (input == null) {
+            return "";
+        }
+        // Replace commas with semicolons to maintain CSV format
+        return input.replace(",", ";");
     }
     
     /**
-     * Resets ride operation statistics (cycles count)
-     * Useful for daily reset or testing
+     * Alternative export method with additional options
+     * Allows specifying whether to include header and formatting options
+     * 
+     * @param filename The name of the file to write to
+     * @param includeHeader Whether to include header information
+     * @param delimiter The delimiter to use (default is comma)
      */
-    public void resetRideStatistics() {
-        System.out.println("Resetting ride statistics for: " + rideName);
-        int oldCycleCount = numOfCycles;
-        numOfCycles = 0;
-        System.out.println("Reset cycle count from " + oldCycleCount + " to 0");
+    public void exportRideHistory(String filename, boolean includeHeader, String delimiter) {
+        System.out.println("Exporting ride history with custom options...");
+        
+        if (delimiter == null || delimiter.trim().isEmpty()) {
+            delimiter = ",";
+        }
+        
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(new FileWriter(filename));
+            
+            if (includeHeader) {
+                writer.println("# Custom export for ride: " + rideName);
+                writer.println("# Total visitors: " + rideHistory.size());
+                writer.println("# Delimiter: " + delimiter);
+            }
+            
+            int count = 0;
+            for (Visitor visitor : rideHistory) {
+                // Use specified delimiter
+                String line = String.format("%s" + delimiter + "%d" + delimiter + "%s" + delimiter + "%s" + delimiter + "%s" + delimiter + "%b",
+                    visitor.getName(), visitor.getAge(), visitor.getGender(),
+                    visitor.getVisitorId(), visitor.getTicketType(), visitor.hasSeasonPass());
+                
+                writer.println(line);
+                count++;
+            }
+            
+            System.out.println("SUCCESS: Exported " + count + " visitors using custom format.");
+            
+        } catch (IOException e) {
+            System.out.println("ERROR: Custom export failed: " + e.getMessage());
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
+        }
     }
     
-    // Part 6-7 Methods - Still stubs for now
-    @Override
-    public void exportRideHistory(String filename) {
-        System.out.println("exportRideHistory method called - To be implemented in Part 6");
+    /**
+     * Validates the export data before writing to file
+     * Checks for potential issues like null values or formatting problems
+     * 
+     * @return true if data is valid for export, false otherwise
+     */
+    public boolean validateExportData() {
+        System.out.println("Validating export data for ride: " + rideName);
+        
+        if (rideHistory.isEmpty()) {
+            System.out.println("WARNING: No data to export.");
+            return true; // Empty data is still valid
+        }
+        
+        int validCount = 0;
+        int invalidCount = 0;
+        
+        for (Visitor visitor : rideHistory) {
+            if (visitor == null) {
+                System.out.println("ERROR: Found null visitor in history!");
+                invalidCount++;
+                continue;
+            }
+            
+            // Check for required fields
+            if (visitor.getName() == null || visitor.getName().trim().isEmpty()) {
+                System.out.println("WARNING: Visitor has empty name");
+            }
+            
+            if (visitor.getVisitorId() == null || visitor.getVisitorId().trim().isEmpty()) {
+                System.out.println("WARNING: Visitor has empty ID");
+            }
+            
+            if (visitor.getAge() < 0 || visitor.getAge() > 150) {
+                System.out.println("WARNING: Visitor has invalid age: " + visitor.getAge());
+            }
+            
+            validCount++;
+        }
+        
+        System.out.println("Validation complete:");
+        System.out.println("  Valid records: " + validCount);
+        System.out.println("  Invalid records: " + invalidCount);
+        
+        return invalidCount == 0;
     }
     
+    // Part 7 Method - Still stub for now
     @Override
     public void importRideHistory(String filename) {
         System.out.println("importRideHistory method called - To be implemented in Part 7");

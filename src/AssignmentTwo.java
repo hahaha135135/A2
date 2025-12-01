@@ -1,3 +1,6 @@
+import java.io.File;
+import java.util.Date;
+
 /**
  * Main class for Assignment 2 - Theme Park Management System
  * Contains main method and demonstration methods for all parts
@@ -10,168 +13,173 @@ public class AssignmentTwo {
      */
     public static void main(String[] args) {
         System.out.println("=== PROG2004 Assignment 2 - Theme Park Management System ===");
-        System.out.println("=== Part 5: Run a Ride Cycle Demonstration ===\n");
+        System.out.println("=== Part 6: Writing to a File Demonstration ===\n");
         
         AssignmentTwo assignment = new AssignmentTwo();
-        assignment.partFive();
+        assignment.partSix();
     }
     
     /**
-     * Part 5: Demonstrates running ride cycles with queue and history integration
-     * Shows the complete flow from queue to history through ride cycles
+     * Part 6: Demonstrates writing ride history to a CSV file
+     * Shows file I/O operations with proper exception handling
      */
-    public void partFive() {
-        System.out.println("STARTING PART 5 DEMONSTRATION: RUN A RIDE CYCLE");
-        System.out.println("==================================================\n");
+    public void partSix() {
+        System.out.println("STARTING PART 6 DEMONSTRATION: WRITING TO FILE");
+        System.out.println("=============================================\n");
         
-        // Step 1: Create ride operator and ride with specific maxRider
-        System.out.println("Step 1: Setting Up Ride with Operator and Max Rider Limit");
-        System.out.println("-------------------------------------------------------");
-        Employee operator = new Employee("Alex CycleMaster", 31, "Male", 
-                                       "E5001", "Ride Operations", "Cycle Operator");
+        // Step 1: Create ride operator and ride
+        System.out.println("Step 1: Setting Up Ride for Export Demonstration");
+        System.out.println("----------------------------------------------");
+        Employee operator = new Employee("Data Exporter", 35, "Male", 
+                                       "E6001", "IT Department", "Data Specialist");
         
-        // Create a roller coaster that can take 4 riders per cycle
-        Ride rollerCoaster = new Ride("Thunder Cyclone", "Roller Coaster", 24, true, operator, 4);
-        System.out.println("Ride created: " + rollerCoaster.getRideName());
-        System.out.println("Max riders per cycle: " + rollerCoaster.getMaxRider() + "\n");
+        Ride rollerCoaster = new Ride("Export Express", "Roller Coaster", 20, true, operator, 3);
+        System.out.println("Ride created: " + rollerCoaster.getRideName() + "\n");
         
-        // Step 2: Create 10+ visitors for the queue
-        System.out.println("Step 2: Creating 10+ Visitors for Queue");
-        System.out.println("--------------------------------------");
+        // Step 2: Create 5+ visitors and add them to ride history
+        System.out.println("Step 2: Creating Visitors for Ride History");
+        System.out.println("-----------------------------------------");
         
         Visitor[] visitors = {
-            new Visitor("Visitor01-First", 20, "Male", "V5001", "Standard", false),
-            new Visitor("Visitor02-Second", 25, "Female", "V5002", "Premium", true),
-            new Visitor("Visitor03-Third", 18, "Male", "V5003", "Student", false),
-            new Visitor("Visitor04-Fourth", 30, "Female", "V5004", "VIP", true),
-            new Visitor("Visitor05-Fifth", 22, "Male", "V5005", "Standard", false),
-            new Visitor("Visitor06-Sixth", 28, "Female", "V5006", "Premium", false),
-            new Visitor("Visitor07-Seventh", 35, "Male", "V5007", "Standard", true),
-            new Visitor("Visitor08-Eighth", 19, "Female", "V5008", "Student", false),
-            new Visitor("Visitor09-Ninth", 40, "Male", "V5009", "VIP", true),
-            new Visitor("Visitor10-Tenth", 26, "Female", "V5010", "Standard", false),
-            new Visitor("Visitor11-Eleventh", 32, "Male", "V5011", "Premium", false), // Extra
-            new Visitor("Visitor12-Twelfth", 23, "Female", "V5012", "Standard", true)  // Extra
+            new Visitor("John Datafield", 28, "Male", "V6001", "Premium", true),
+            new Visitor("Sarah CSV", 32, "Female", "V6002", "Standard", false),
+            new Visitor("Mike Fileman", 45, "Male", "V6003", "VIP", true),
+            new Visitor("Emma Export", 22, "Female", "V6004", "Student", false),
+            new Visitor("David Writer", 38, "Male", "V6005", "Standard", true),
+            new Visitor("Lisa Document", 29, "Female", "V6006", "Premium", false), // Extra
+            new Visitor("Tom Backup", 51, "Male", "V6007", "VIP", true)           // Extra
         };
         
-        System.out.println("Created " + visitors.length + " visitors for the queue.\n");
+        System.out.println("Created " + visitors.length + " visitors for ride history.\n");
         
-        // Step 3: Add all visitors to the queue
-        System.out.println("Step 3: Adding All Visitors to Queue");
-        System.out.println("-----------------------------------");
+        // Step 3: Add all visitors to ride history
+        System.out.println("Step 3: Adding Visitors to Ride History");
+        System.out.println("--------------------------------------");
         for (Visitor visitor : visitors) {
-            rollerCoaster.addVisitorToQueue(visitor);
+            rollerCoaster.addVisitorToHistory(visitor);
         }
-        System.out.println(); // Empty line for readability
+        System.out.println(); // Empty line
         
-        // Step 4: Print initial queue state
-        System.out.println("Step 4: Printing Initial Queue State");
-        System.out.println("-----------------------------------");
-        rollerCoaster.printQueue();
-        System.out.println("Initial queue size: " + rollerCoaster.getWaitingQueue().size());
-        System.out.println("Initial history size: " + rollerCoaster.getRideHistory().size());
-        System.out.println("Initial cycles run: " + rollerCoaster.getNumOfCycles() + "\n");
-        
-        // Step 5: Run one complete cycle
-        System.out.println("Step 5: Running One Complete Ride Cycle");
+        // Step 4: Display current ride history before export
+        System.out.println("Step 4: Displaying Current Ride History");
         System.out.println("--------------------------------------");
-        rollerCoaster.runOneCycle();
-        
-        // Step 6: Print queue after first cycle
-        System.out.println("Step 6: Printing Queue After First Cycle");
-        System.out.println("--------------------------------------");
-        rollerCoaster.printQueue();
-        System.out.println("Queue size after cycle 1: " + rollerCoaster.getWaitingQueue().size() + "\n");
-        
-        // Step 7: Print ride history after first cycle
-        System.out.println("Step 7: Printing Ride History After First Cycle");
-        System.out.println("---------------------------------------------");
         rollerCoaster.printRideHistory();
-        System.out.println("History size after cycle 1: " + rollerCoaster.getRideHistory().size() + "\n");
+        System.out.println(); // Empty line
         
-        // Step 8: Run second cycle to show continued operation
-        System.out.println("Step 8: Running Second Ride Cycle");
-        System.out.println("-------------------------------");
-        rollerCoaster.runOneCycle();
+        // Step 5: Validate data before export
+        System.out.println("Step 5: Validating Export Data");
+        System.out.println("-----------------------------");
+        boolean isValid = rollerCoaster.validateExportData();
+        System.out.println("Data validation result: " + (isValid ? "PASSED" : "FAILED") + "\n");
         
-        // Step 9: Show state after second cycle
-        System.out.println("Step 9: State After Second Cycle");
-        System.out.println("-------------------------------");
-        System.out.println("Queue size: " + rollerCoaster.getWaitingQueue().size());
-        System.out.println("History size: " + rollerCoaster.getRideHistory().size());
-        System.out.println("Total cycles run: " + rollerCoaster.getNumOfCycles() + "\n");
+        // Step 6: Export ride history to CSV file (main demonstration)
+        System.out.println("Step 6: Exporting Ride History to CSV File");
+        System.out.println("-----------------------------------------");
         
-        // Step 10: Run multiple cycles to demonstrate continuous operation
-        System.out.println("Step 10: Running Multiple Cycles Until Queue is Empty");
-        System.out.println("---------------------------------------------------");
+        String filename = "ride_history_export.csv";
+        System.out.println("Target file: " + filename);
+        System.out.println("Export started at: " + new Date());
         
-        int additionalCycles = 0;
-        while (!rollerCoaster.getWaitingQueue().isEmpty()) {
-            rollerCoaster.runOneCycle();
-            additionalCycles++;
-            
-            // Safety break to prevent infinite loop
-            if (additionalCycles > 10) {
-                System.out.println("Safety break: Too many cycles, breaking loop");
-                break;
-            }
-        }
+        rollerCoaster.exportRideHistory(filename);
         
-        System.out.println("Ran " + additionalCycles + " additional cycles to clear queue\n");
+        // Step 7: Verify the exported file
+        System.out.println("Step 7: Verifying Exported File");
+        System.out.println("------------------------------");
+        verifyExportedFile(filename);
         
-        // Step 11: Show final state
-        System.out.println("Step 11: Final State After All Cycles");
-        System.out.println("-----------------------------------");
-        System.out.println("Final queue size: " + rollerCoaster.getWaitingQueue().size());
-        System.out.println("Final history size: " + rollerCoaster.getRideHistory().size());
-        System.out.println("Final cycles run: " + rollerCoaster.getNumOfCycles());
-        System.out.println("\n" + rollerCoaster.getRideStatistics() + "\n");
+        // Step 8: Test export with different scenarios
+        System.out.println("Step 8: Testing Different Export Scenarios");
+        System.out.println("-----------------------------------------");
         
-        // Step 12: Test error conditions and edge cases
-        System.out.println("Step 12: Testing Error Conditions and Edge Cases");
-        System.out.println("-----------------------------------------------");
+        // Test 8a: Export empty ride history
+        System.out.println("\nTest 8a: Exporting Empty Ride History");
+        Ride emptyRide = new Ride("Empty Ride", "Test", 10, true, operator, 2);
+        emptyRide.exportRideHistory("empty_history.csv");
         
-        // Test 12a: Try to run cycle with no operator
-        System.out.println("Test 12a: Running cycle with NO OPERATOR");
-        Ride noOperatorRide = new Ride("Unmanned Ride", "Test", 10, true, null, 2);
-        noOperatorRide.addVisitorToQueue(new Visitor("Test Visitor", 25, "Male", "VT001", "Test", false));
-        noOperatorRide.runOneCycle();
+        // Test 8b: Export with custom options
+        System.out.println("\nTest 8b: Exporting with Custom Format");
+        rollerCoaster.exportRideHistory("custom_export.csv", true, "|");
         
-        // Test 12b: Try to run cycle with empty queue
-        System.out.println("\nTest 12b: Running cycle with EMPTY QUEUE");
-        Ride emptyQueueRide = new Ride("Empty Ride", "Test", 10, true, operator, 2);
-        emptyQueueRide.runOneCycle();
+        // Test 8c: Test error conditions
+        System.out.println("\nTest 8c: Testing Error Conditions");
         
-        // Test 12c: Try to run cycle with non-operational ride
-        System.out.println("\nTest 12c: Running cycle with NON-OPERATIONAL RIDE");
-        Ride brokenRide = new Ride("Broken Ride", "Test", 10, false, operator, 2);
-        brokenRide.addVisitorToQueue(new Visitor("Test Visitor", 25, "Male", "VT002", "Test", false));
-        brokenRide.runOneCycle();
+        // Try to export to invalid filename
+        System.out.println("\nTesting invalid filename:");
+        rollerCoaster.exportRideHistory("/invalid/path/file.csv");
         
-        // Test 12d: Test with very small maxRider (1)
-        System.out.println("\nTest 12d: Running cycles with MAX RIDER = 1");
-        Ride singleRiderRide = new Ride("Single Rider", "Test", 5, true, operator, 1);
-        for (int i = 0; i < 3; i++) {
-            singleRiderRide.addVisitorToQueue(new Visitor("Single" + i, 20 + i, "Female", "VS00" + i, "Test", false));
-        }
-        singleRiderRide.runOneCycle();
-        singleRiderRide.runOneCycle();
-        System.out.println("Queue after 2 cycles: " + singleRiderRide.getWaitingQueue().size());
+        // Try to export with visitor containing commas in name (testing escapeCommas)
+        System.out.println("\nTesting export with special characters:");
+        Ride specialRide = new Ride("Special Ride", "Test", 10, true, operator, 2);
+        Visitor specialVisitor = new Visitor("Test, Comma, Name", 25, "Male", "V9999", "Test,Type", false);
+        specialRide.addVisitorToHistory(specialVisitor);
+        specialRide.exportRideHistory("special_chars.csv");
         
-        System.out.println("\nPART 5 DEMONSTRATION COMPLETED SUCCESSFULLY!");
-        System.out.println("===============================================");
+        // Step 9: Show file content preview
+        System.out.println("Step 9: Previewing Exported File Content");
+        System.out.println("---------------------------------------");
+        previewFileContent(filename);
+        
+        System.out.println("\nPART 6 DEMONSTRATION COMPLETED SUCCESSFULLY!");
+        System.out.println("===========================================");
         System.out.println("Summary:");
-        System.out.println("- Created ride with maxRider = 4 and operator");
-        System.out.println("- Added " + visitors.length + " visitors to queue");
-        System.out.println("- Ran multiple ride cycles successfully");
-        System.out.println("- Demonstrated queue to history transition");
-        System.out.println("- Showed cycle counting and statistics");
-        System.out.println("- Tested all error conditions and edge cases");
-        System.out.println("- Final: " + rollerCoaster.getNumOfCycles() + " cycles run, " + 
-                         rollerCoaster.getRideHistory().size() + " visitors served");
+        System.out.println("- Created ride with " + visitors.length + " visitors in history");
+        System.out.println("- Implemented exportRideHistory() method with CSV format");
+        System.out.println("- Added proper exception handling for file I/O operations");
+        System.out.println("- Demonstrated data validation before export");
+        System.out.println("- Tested various export scenarios and error conditions");
+        System.out.println("- Files created: ride_history_export.csv, empty_history.csv, custom_export.csv, special_chars.csv");
     }
     
-    // Placeholder methods for future parts
-    public void partSix() {}
+    /**
+     * Helper method to verify that a file was created successfully
+     * @param filename The name of the file to verify
+     */
+    private void verifyExportedFile(String filename) {
+        File file = new File(filename);
+        
+        if (file.exists()) {
+            System.out.println("SUCCESS: File created: " + filename);
+            System.out.println("File size: " + file.length() + " bytes");
+            System.out.println("Absolute path: " + file.getAbsolutePath());
+            System.out.println("Last modified: " + new Date(file.lastModified()));
+            
+            // Check if file is readable and writable
+            System.out.println("Readable: " + file.canRead());
+            System.out.println("Writable: " + file.canWrite());
+        } else {
+            System.out.println("ERROR: File was not created: " + filename);
+        }
+    }
+    
+    /**
+     * Helper method to preview the first few lines of a file
+     * @param filename The name of the file to preview
+     */
+    private void previewFileContent(String filename) {
+        System.out.println("Preview of file: " + filename);
+        System.out.println("First 5 lines:");
+        System.out.println("---------------");
+        
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(filename))) {
+            String line;
+            int lineCount = 0;
+            
+            while ((line = reader.readLine()) != null && lineCount < 5) {
+                System.out.println(line);
+                lineCount++;
+            }
+            
+            if (lineCount == 0) {
+                System.out.println("(File is empty)");
+            }
+            
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println("ERROR: File not found: " + filename);
+        } catch (java.io.IOException e) {
+            System.out.println("ERROR: Cannot read file: " + e.getMessage());
+        }
+    }
+    
+    // Placeholder method for future part
     public void partSeven() {}
 }
