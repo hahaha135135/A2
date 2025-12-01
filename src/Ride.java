@@ -4,53 +4,34 @@ import java.io.*;
 /**
  * Ride class representing theme park rides/attractions
  * Implements RideInterface to provide ride functionality
- * Manages ride information, waiting queue, and ride history
  */
 public class Ride implements RideInterface {
-    // Instance variables for ride attributes
+    // Instance variables
     private String rideName;
     private String rideType;
     private int capacity;
     private boolean isOperational;
-    private Employee operator; // Employee assigned to operate this ride
+    private Employee operator;
+    private int maxRider;
+    private int numOfCycles;
     
-    // Part 5: Additional instance variables for ride operation
-    private int maxRider;      // Maximum riders per cycle
-    private int numOfCycles;   // Number of times ride has been run
+    // Collections
+    private Queue<Visitor> waitingQueue;
+    private LinkedList<Visitor> rideHistory;
     
-    // Collections for queue and history management
-    private Queue<Visitor> waitingQueue;     // For Part 3 - Waiting line (FIFO)
-    private LinkedList<Visitor> rideHistory; // For Part 4 - Ride history
-    
-    /**
-     * Default constructor - initializes with default values
-     * Also initializes the collections and ride operation variables
-     */
+    // Constructors
     public Ride() {
         this.rideName = "Unnamed Ride";
         this.rideType = "General";
         this.capacity = 10;
         this.isOperational = false;
         this.operator = null;
-        this.maxRider = 2;     // Default max riders per cycle
-        this.numOfCycles = 0;  // Start with 0 cycles
-        
-        // Initialize collections
+        this.maxRider = 2;
+        this.numOfCycles = 0;
         this.waitingQueue = new LinkedList<>();
         this.rideHistory = new LinkedList<>();
-        
-        System.out.println("Ride default constructor called");
     }
     
-    /**
-     * Parameterized constructor - initializes with specific values
-     * @param rideName Name of the ride
-     * @param rideType Type/category of the ride
-     * @param capacity Maximum capacity of the ride
-     * @param isOperational Whether the ride is currently operational
-     * @param operator Employee assigned to operate the ride
-     * @param maxRider Maximum number of riders per cycle
-     */
     public Ride(String rideName, String rideType, int capacity, boolean isOperational, 
                 Employee operator, int maxRider) {
         this.rideName = rideName;
@@ -59,16 +40,12 @@ public class Ride implements RideInterface {
         this.isOperational = isOperational;
         this.operator = operator;
         this.maxRider = maxRider;
-        this.numOfCycles = 0;  // Start with 0 cycles
-        
-        // Initialize collections
+        this.numOfCycles = 0;
         this.waitingQueue = new LinkedList<>();
         this.rideHistory = new LinkedList<>();
-        
-        System.out.println("Ride parameterized constructor called for: " + rideName);
     }
     
-    // Getter and Setter methods
+    // Getters and Setters
     public String getRideName() { return rideName; }
     public void setRideName(String rideName) { this.rideName = rideName; }
     public String getRideType() { return rideType; }
@@ -82,17 +59,16 @@ public class Ride implements RideInterface {
     public void setOperational(boolean isOperational) { this.isOperational = isOperational; }
     public Employee getOperator() { return operator; }
     public void setOperator(Employee operator) { this.operator = operator; }
-    public Queue<Visitor> getWaitingQueue() { return waitingQueue; }
-    public LinkedList<Visitor> getRideHistory() { return rideHistory; }
     public int getMaxRider() { return maxRider; }
     public void setMaxRider(int maxRider) { 
         if (maxRider > 0) this.maxRider = maxRider; 
         else System.out.println("Error: maxRider must be positive");
     }
     public int getNumOfCycles() { return numOfCycles; }
+    public Queue<Visitor> getWaitingQueue() { return waitingQueue; }
+    public LinkedList<Visitor> getRideHistory() { return rideHistory; }
     
-    // Part 3-5 Methods (implemented in previous parts)
-    
+    // Part 3: Queue Methods
     @Override
     public void addVisitorToQueue(Visitor visitor) {
         if (visitor == null) {
@@ -134,6 +110,7 @@ public class Ride implements RideInterface {
         System.out.println("========================================");
     }
     
+    // Part 4: History Methods
     @Override
     public void addVisitorToHistory(Visitor visitor) {
         if (visitor == null) {
@@ -154,9 +131,7 @@ public class Ride implements RideInterface {
         }
         Iterator<Visitor> iterator = rideHistory.iterator();
         while (iterator.hasNext()) {
-            if (iterator.next().equals(visitor)) {
-                return true;
-            }
+            if (iterator.next().equals(visitor)) return true;
         }
         return false;
     }
@@ -192,10 +167,10 @@ public class Ride implements RideInterface {
         System.out.println("Success: Ride history sorted for: " + rideName);
     }
     
+    // Part 5: Run Cycle Method
     @Override
     public void runOneCycle() {
         System.out.println("\nATTEMPTING TO RUN RIDE CYCLE: " + rideName);
-        System.out.println("==========================================");
         
         if (operator == null) {
             System.out.println("ERROR: Cannot run ride - No operator assigned to: " + rideName);
@@ -231,192 +206,201 @@ public class Ride implements RideInterface {
         System.out.println("==========================================\n");
     }
     
-    // Part 6: Writing to File - FULL IMPLEMENTATION
-    
-    /**
-     * Exports ride history to a CSV file
-     * Each visitor's details are written on a separate line in comma-separated format
-     * Implements proper exception handling as required
-     * 
-     * @param filename The name of the file to write to
-     */
+    // Part 6: Export Method
     @Override
-public void exportRideHistory(String filename) {
-    System.out.println("ATTEMPTING TO EXPORT RIDE HISTORY TO FILE: " + filename);
-    System.out.println("Ride: " + rideName);
-    System.out.println("Number of visitors to export: " + rideHistory.size());
-    
-    PrintWriter writer = null;
-    try {
-        writer = new PrintWriter(new FileWriter(filename));
+    public void exportRideHistory(String filename) {
+        System.out.println("ATTEMPTING TO EXPORT RIDE HISTORY TO FILE: " + filename);
+        System.out.println("Ride: " + rideName);
+        System.out.println("Number of visitors to export: " + rideHistory.size());
         
-        // Write header lines
-        writer.println("# Ride History Export for: " + rideName);
-        writer.println("# Export Date: " + new Date());
-        writer.println("# Format: Name,Age,Gender,VisitorID,TicketType,HasSeasonPass");
-        
-        int exportCount = 0;
-        for (Visitor visitor : rideHistory) {
-            String line = String.format("%s,%d,%s,%s,%s,%b",
-                escapeCommas(visitor.getName()),
-                visitor.getAge(),
-                escapeCommas(visitor.getGender()),
-                escapeCommas(visitor.getVisitorId()),
-                escapeCommas(visitor.getTicketType()),
-                visitor.hasSeasonPass());
-            
-            writer.println(line);
-            exportCount++;
-        }
-        
-        writer.flush();
-        System.out.println("SUCCESS: Exported " + exportCount + " visitors to file: " + filename);
-        
-    } catch (FileNotFoundException e) {
-        System.out.println("ERROR: File not found or cannot be created: " + filename);
-        System.out.println("Error details: " + e.getMessage());
-        
-    } catch (SecurityException e) {
-        System.out.println("ERROR: Security exception - No permission to write to file: " + filename);
-        System.out.println("Error details: " + e.getMessage());
-        
-    } catch (IOException e) {
-        System.out.println("ERROR: IO Exception occurred during export!");
-        System.out.println("Error type: " + e.getClass().getName());
-        System.out.println("Error message: " + e.getMessage());
-        
-    } catch (Exception e) {
-        System.out.println("ERROR: Unexpected error during export!");
-        System.out.println("Error type: " + e.getClass().getName());
-        System.out.println("Error message: " + e.getMessage());
-        
-    } finally {
-        if (writer != null) {
-            try {
-                writer.close();
-                System.out.println("File writer closed successfully.");
-            } catch (Exception e) {
-                System.out.println("WARNING: Error closing file writer: " + e.getMessage());
-            }
-        }
-    }
-    
-    System.out.println("Export process completed.\n");
-}
-    
-    /**
-     * Helper method to escape commas in string values
-     * Replaces commas with a placeholder to avoid CSV parsing issues
-     * 
-     * @param input The input string that may contain commas
-     * @return The string with commas replaced by semicolons
-     */
-    private String escapeCommas(String input) {
-        if (input == null) {
-            return "";
-        }
-        // Replace commas with semicolons to maintain CSV format
-        return input.replace(",", ";");
-    }
-    
-    /**
-     * Alternative export method with additional options
-     * Allows specifying whether to include header and formatting options
-     * 
-     * @param filename The name of the file to write to
-     * @param includeHeader Whether to include header information
-     * @param delimiter The delimiter to use (default is comma)
-     */
-    public void exportRideHistory(String filename, boolean includeHeader, String delimiter) {
-        System.out.println("Exporting ride history with custom options...");
-        
-        if (delimiter == null || delimiter.trim().isEmpty()) {
-            delimiter = ",";
+        if (rideHistory.isEmpty()) {
+            System.out.println("WARNING: No ride history to export. File will be empty.");
         }
         
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(new FileWriter(filename));
             
-            if (includeHeader) {
-                writer.println("# Custom export for ride: " + rideName);
-                writer.println("# Total visitors: " + rideHistory.size());
-                writer.println("# Delimiter: " + delimiter);
-            }
+            writer.println("# Ride History Export for: " + rideName);
+            writer.println("# Export Date: " + new Date());
+            writer.println("# Format: Name,Age,Gender,VisitorID,TicketType,HasSeasonPass");
             
-            int count = 0;
+            int exportCount = 0;
             for (Visitor visitor : rideHistory) {
-                // Use specified delimiter
-                String line = String.format("%s" + delimiter + "%d" + delimiter + "%s" + delimiter + "%s" + delimiter + "%s" + delimiter + "%b",
-                    visitor.getName(), visitor.getAge(), visitor.getGender(),
-                    visitor.getVisitorId(), visitor.getTicketType(), visitor.hasSeasonPass());
+                String line = String.format("%s,%d,%s,%s,%s,%b",
+                    escapeCommas(visitor.getName()),
+                    visitor.getAge(),
+                    escapeCommas(visitor.getGender()),
+                    escapeCommas(visitor.getVisitorId()),
+                    escapeCommas(visitor.getTicketType()),
+                    visitor.hasSeasonPass());
                 
                 writer.println(line);
-                count++;
+                exportCount++;
             }
             
-            System.out.println("SUCCESS: Exported " + count + " visitors using custom format.");
+            writer.flush();
+            System.out.println("SUCCESS: Exported " + exportCount + " visitors to file: " + filename);
+            System.out.println("File location: " + new File(filename).getAbsolutePath());
             
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: File not found or cannot be created: " + filename);
+            System.out.println("Error details: " + e.getMessage());
+        } catch (SecurityException e) {
+            System.out.println("ERROR: Security exception - No permission to write to file: " + filename);
+            System.out.println("Error details: " + e.getMessage());
         } catch (IOException e) {
-            System.out.println("ERROR: Custom export failed: " + e.getMessage());
+            System.out.println("ERROR: IO Exception occurred during export!");
+            System.out.println("Error details: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("ERROR: Unexpected error during export!");
+            System.out.println("Error details: " + e.getMessage());
         } finally {
             if (writer != null) {
-                writer.close();
+                try {
+                    writer.close();
+                    System.out.println("File writer closed successfully.");
+                } catch (Exception e) {
+                    System.out.println("WARNING: Error closing file writer: " + e.getMessage());
+                }
             }
         }
+        
+        System.out.println("Export process completed.\n");
     }
     
-    /**
-     * Validates the export data before writing to file
-     * Checks for potential issues like null values or formatting problems
-     * 
-     * @return true if data is valid for export, false otherwise
-     */
-    public boolean validateExportData() {
-        System.out.println("Validating export data for ride: " + rideName);
-        
-        if (rideHistory.isEmpty()) {
-            System.out.println("WARNING: No data to export.");
-            return true; // Empty data is still valid
-        }
-        
-        int validCount = 0;
-        int invalidCount = 0;
-        
-        for (Visitor visitor : rideHistory) {
-            if (visitor == null) {
-                System.out.println("ERROR: Found null visitor in history!");
-                invalidCount++;
-                continue;
-            }
-            
-            // Check for required fields
-            if (visitor.getName() == null || visitor.getName().trim().isEmpty()) {
-                System.out.println("WARNING: Visitor has empty name");
-            }
-            
-            if (visitor.getVisitorId() == null || visitor.getVisitorId().trim().isEmpty()) {
-                System.out.println("WARNING: Visitor has empty ID");
-            }
-            
-            if (visitor.getAge() < 0 || visitor.getAge() > 150) {
-                System.out.println("WARNING: Visitor has invalid age: " + visitor.getAge());
-            }
-            
-            validCount++;
-        }
-        
-        System.out.println("Validation complete:");
-        System.out.println("  Valid records: " + validCount);
-        System.out.println("  Invalid records: " + invalidCount);
-        
-        return invalidCount == 0;
+    private String escapeCommas(String input) {
+        if (input == null) return "";
+        return input.replace(",", ";");
     }
     
-    // Part 7 Method - Still stub for now
+    // Part 7: Import Method
     @Override
     public void importRideHistory(String filename) {
-        System.out.println("importRideHistory method called - To be implemented in Part 7");
+        System.out.println("\nATTEMPTING TO IMPORT RIDE HISTORY FROM FILE: " + filename);
+        System.out.println("Ride: " + rideName);
+        System.out.println("Current history size before import: " + rideHistory.size());
+        
+        BufferedReader reader = null;
+        int importedCount = 0;
+        int skippedCount = 0;
+        int lineNumber = 0;
+        
+        try {
+            reader = new BufferedReader(new FileReader(filename));
+            String line;
+            
+            System.out.println("Starting file import process...");
+            
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                
+                if (line.trim().isEmpty() || line.trim().startsWith("#")) {
+                    continue;
+                }
+                
+                try {
+                    Visitor visitor = parseVisitorFromCSV(line, lineNumber);
+                    if (visitor != null) {
+                        boolean added = rideHistory.add(visitor);
+                        if (added) importedCount++;
+                        else skippedCount++;
+                    } else {
+                        skippedCount++;
+                    }
+                } catch (Exception e) {
+                    skippedCount++;
+                    System.out.println("ERROR: Failed to parse line " + lineNumber + ": " + e.getMessage());
+                }
+            }
+            
+            System.out.println("SUCCESS: File import completed!");
+            System.out.println("Imported visitors: " + importedCount);
+            System.out.println("Skipped lines: " + skippedCount);
+            System.out.println("Total lines processed: " + lineNumber);
+            System.out.println("Final history size: " + rideHistory.size());
+            
+        } catch (FileNotFoundException e) {
+            System.out.println("ERROR: File not found: " + filename);
+            System.out.println("Please check if the file exists at: " + new File(filename).getAbsolutePath());
+        } catch (SecurityException e) {
+            System.out.println("ERROR: Security exception - No permission to read file: " + filename);
+            System.out.println("Error details: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("ERROR: IO Exception occurred during import!");
+            System.out.println("Error details: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("ERROR: Unexpected error during import!");
+            System.out.println("Error type: " + e.getClass().getName());
+            System.out.println("Error message: " + e.getMessage());
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                    System.out.println("File reader closed successfully.");
+                } catch (IOException e) {
+                    System.out.println("WARNING: Error closing file reader: " + e.getMessage());
+                }
+            }
+        }
+        
+        System.out.println("Import process completed.\n");
+    }
+    
+    private Visitor parseVisitorFromCSV(String csvLine, int lineNumber) {
+        try {
+            String[] parts = csvLine.split(",");
+            
+            if (parts.length < 6) {
+                System.out.println("WARNING: Line " + lineNumber + 
+                                 " has insufficient data. Expected 6 fields, found " + parts.length);
+                return null;
+            }
+            
+            String name = unescapeCommas(parts[0].trim());
+            int age;
+            try {
+                age = Integer.parseInt(parts[1].trim());
+            } catch (NumberFormatException e) {
+                System.out.println("ERROR: Invalid age format on line " + lineNumber + ": " + parts[1]);
+                return null;
+            }
+            
+            String gender = unescapeCommas(parts[2].trim());
+            String visitorId = unescapeCommas(parts[3].trim());
+            String ticketType = unescapeCommas(parts[4].trim());
+            boolean hasSeasonPass;
+            
+            try {
+                hasSeasonPass = Boolean.parseBoolean(parts[5].trim());
+            } catch (Exception e) {
+                System.out.println("WARNING: Invalid boolean format on line " + lineNumber + ", defaulting to false");
+                hasSeasonPass = false;
+            }
+            
+            if (name.isEmpty()) {
+                name = "Unknown Visitor";
+            }
+            
+            if (visitorId.isEmpty()) {
+                visitorId = "IMP" + lineNumber;
+            }
+            
+            if (age < 0 || age > 150) {
+                age = 25;
+            }
+            
+            return new Visitor(name, age, gender, visitorId, ticketType, hasSeasonPass);
+            
+        } catch (Exception e) {
+            System.out.println("ERROR: Failed to parse CSV line " + lineNumber);
+            return null;
+        }
+    }
+    
+    private String unescapeCommas(String input) {
+        if (input == null) return "";
+        return input.replace(";", ",");
     }
     
     @Override

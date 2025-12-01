@@ -1,0 +1,7 @@
+# Test Ride History for Import
+# Format: Name,Age,Gender,VisitorID,TicketType,HasSeasonPass
+Test Visitor 1,25,Male,TV001,Premium,true
+Test Visitor 2,30,Female,TV002,Standard,false
+Test Visitor 3,22,Male,TV003,Student,true
+Test Visitor 4,35,Female,TV004,VIP,false
+Test Visitor 5,28,Male,TV005,Standard,true

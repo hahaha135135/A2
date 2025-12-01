@@ -1,5 +1,7 @@
 import java.io.File;
-import java.util.Date;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Main class for Assignment 2 - Theme Park Management System
@@ -9,177 +11,218 @@ public class AssignmentTwo {
     
     /**
      * Main method - entry point of the application
-     * @param args Command line arguments (not used)
+     * Run all parts in sequence
      */
     public static void main(String[] args) {
-        System.out.println("=== PROG2004 Assignment 2 - Theme Park Management System ===");
-        System.out.println("=== Part 6: Writing to a File Demonstration ===\n");
-        
         AssignmentTwo assignment = new AssignmentTwo();
-        assignment.partSix();
+        // Run all parts
+        assignment.runAllParts();
     }
     
     /**
-     * Part 6: Demonstrates writing ride history to a CSV file
-     * Shows file I/O operations with proper exception handling
+     * Run all parts in sequence
      */
+    public void runAllParts() {
+        System.out.println("\n\nStarting Part 3: Waiting Line (Queue)...");
+        partThree();
+        
+        System.out.println("\n\nStarting Part 4A: Ride History...");
+        partFourA();
+        
+        System.out.println("\n\nStarting Part 4B: Sorting Ride History...");
+        partFourB();
+        
+        System.out.println("\n\nStarting Part 5: Run a Ride Cycle...");
+        partFive();
+        
+        System.out.println("\n\nStarting Part 6: Writing to File (Generates CSV)...");
+        partSix();  // This will generate ride_history_export.csv
+        
+        System.out.println("\n\nStarting Part 7: Reading from File...");
+        partSeven();  // This will read the file generated in Part 6
+    }
+
+    // Part 3: Waiting Line (Queue)
+    public void partThree() {
+        Employee operator = new Employee("Queue Manager", 32, "Male", "E3001", "Ride Operations", "Senior Operator");
+        Ride rollerCoaster = new Ride("Dragon Fury", "Roller Coaster", 24, true, operator, 3);
+        
+        Visitor[] visitors = {
+            new Visitor("Alice Adventure", 25, "Female", "V3001", "Premium", false),
+            new Visitor("Bob Thrillseeker", 30, "Male", "V3002", "Standard", true),
+            new Visitor("Charlie Courage", 22, "Male", "V3003", "VIP", false),
+            new Visitor("Diana Daredevil", 28, "Female", "V3004", "Standard", false),
+            new Visitor("Emma Excitement", 35, "Female", "V3005", "Premium", true)
+        };
+        
+        for (Visitor visitor : visitors) {
+            rollerCoaster.addVisitorToQueue(visitor);
+        }
+        
+        System.out.println("Initial queue:");
+        rollerCoaster.printQueue();
+        
+        rollerCoaster.removeVisitorFromQueue();
+        
+        System.out.println("\nQueue after removal:");
+        rollerCoaster.printQueue();
+    }
+    
+    // Part 4A: Ride History
+    public void partFourA() {
+        Employee operator = new Employee("History Keeper", 29, "Female", "E4001", "Ride Operations", "History Manager");
+        Ride waterRide = new Ride("Splash Adventure", "Water Ride", 16, true, operator, 4);
+        
+        Visitor[] visitors = {
+            new Visitor("Olivia Ocean", 22, "Female", "V4001", "Premium", false),
+            new Visitor("Liam Lake", 45, "Male", "V4002", "Standard", true),
+            new Visitor("Sophia Stream", 19, "Female", "V4003", "Student", false),
+            new Visitor("Noah Navy", 33, "Male", "V4004", "VIP", true),
+            new Visitor("Ava Aqua", 28, "Female", "V4005", "Standard", false)
+        };
+        
+        for (Visitor visitor : visitors) {
+            waterRide.addVisitorToHistory(visitor);
+        }
+        
+        waterRide.checkVisitorFromHistory(visitors[0]);
+        System.out.println("Number of visitors: " + waterRide.numberOfVisitors());
+        
+        System.out.println("\nRide History:");
+        waterRide.printRideHistory();
+    }
+    
+    // Part 4B: Sorting Ride History
+    public void partFourB() {
+        Employee operator = new Employee("Sorter", 34, "Male", "E4002", "Ride Operations", "Sorting Specialist");
+        Ride ferrisWheel = new Ride("Sky High Wheel", "Ferris Wheel", 30, true, operator, 4);
+        
+        Visitor[] visitors = {
+            new Visitor("Zoe Zenith", 15, "Female", "V4010", "Child", false),
+            new Visitor("Adam Alpha", 45, "Male", "V4011", "Premium", true),
+            new Visitor("Charlie Middle", 25, "Male", "V4012", "Standard", false),
+            new Visitor("Betta Beta", 15, "Female", "V4013", "Student", true),
+            new Visitor("David Delta", 32, "Male", "V4014", "VIP", false)
+        };
+        
+        for (Visitor visitor : visitors) {
+            ferrisWheel.addVisitorToHistory(visitor);
+        }
+        
+        System.out.println("Before sorting:");
+        ferrisWheel.printRideHistory();
+        
+        VisitorComparator comparator = new VisitorComparator();
+        ferrisWheel.sortRideHistory(comparator);
+        
+        System.out.println("\nAfter sorting:");
+        ferrisWheel.printRideHistory();
+    }
+    
+    // Part 5: Run a Ride Cycle
+    public void partFive() {
+        Employee operator = new Employee("Cycle Master", 31, "Male", "E5001", "Ride Operations", "Cycle Operator");
+        Ride rollerCoaster = new Ride("Thunder Cyclone", "Roller Coaster", 24, true, operator, 4);
+        
+        Visitor[] visitors = new Visitor[10];
+        for (int i = 0; i < 10; i++) {
+            visitors[i] = new Visitor("Visitor" + (i+1), 20 + i, i % 2 == 0 ? "Male" : "Female", 
+                                    "V" + (500 + i), i % 3 == 0 ? "Premium" : "Standard", i % 2 == 0);
+            rollerCoaster.addVisitorToQueue(visitors[i]);
+        }
+        
+        System.out.println("Before running cycle:");
+        System.out.println("Queue size: " + rollerCoaster.getWaitingQueue().size());
+        System.out.println("History size: " + rollerCoaster.getRideHistory().size());
+        
+        rollerCoaster.runOneCycle();
+        
+        System.out.println("\nAfter running cycle:");
+        System.out.println("Queue size: " + rollerCoaster.getWaitingQueue().size());
+        System.out.println("History size: " + rollerCoaster.getRideHistory().size());
+        System.out.println("Cycles run: " + rollerCoaster.getNumOfCycles());
+    }
+    
+    // Part 6: Writing to File
     public void partSix() {
-        System.out.println("STARTING PART 6 DEMONSTRATION: WRITING TO FILE");
-        System.out.println("=============================================\n");
-        
-        // Step 1: Create ride operator and ride
-        System.out.println("Step 1: Setting Up Ride for Export Demonstration");
-        System.out.println("----------------------------------------------");
-        Employee operator = new Employee("Data Exporter", 35, "Male", 
-                                       "E6001", "IT Department", "Data Specialist");
-        
+        Employee operator = new Employee("Data Exporter", 35, "Male", "E6001", "IT Department", "Data Specialist");
         Ride rollerCoaster = new Ride("Export Express", "Roller Coaster", 20, true, operator, 3);
-        System.out.println("Ride created: " + rollerCoaster.getRideName() + "\n");
-        
-        // Step 2: Create 5+ visitors and add them to ride history
-        System.out.println("Step 2: Creating Visitors for Ride History");
-        System.out.println("-----------------------------------------");
         
         Visitor[] visitors = {
             new Visitor("John Datafield", 28, "Male", "V6001", "Premium", true),
             new Visitor("Sarah CSV", 32, "Female", "V6002", "Standard", false),
             new Visitor("Mike Fileman", 45, "Male", "V6003", "VIP", true),
             new Visitor("Emma Export", 22, "Female", "V6004", "Student", false),
-            new Visitor("David Writer", 38, "Male", "V6005", "Standard", true),
-            new Visitor("Lisa Document", 29, "Female", "V6006", "Premium", false), // Extra
-            new Visitor("Tom Backup", 51, "Male", "V6007", "VIP", true)           // Extra
+            new Visitor("David Writer", 38, "Male", "V6005", "Standard", true)
         };
         
-        System.out.println("Created " + visitors.length + " visitors for ride history.\n");
-        
-        // Step 3: Add all visitors to ride history
-        System.out.println("Step 3: Adding Visitors to Ride History");
-        System.out.println("--------------------------------------");
         for (Visitor visitor : visitors) {
             rollerCoaster.addVisitorToHistory(visitor);
         }
-        System.out.println(); // Empty line
-        
-        // Step 4: Display current ride history before export
-        System.out.println("Step 4: Displaying Current Ride History");
-        System.out.println("--------------------------------------");
-        rollerCoaster.printRideHistory();
-        System.out.println(); // Empty line
-        
-        // Step 5: Validate data before export
-        System.out.println("Step 5: Validating Export Data");
-        System.out.println("-----------------------------");
-        boolean isValid = rollerCoaster.validateExportData();
-        System.out.println("Data validation result: " + (isValid ? "PASSED" : "FAILED") + "\n");
-        
-        // Step 6: Export ride history to CSV file (main demonstration)
-        System.out.println("Step 6: Exporting Ride History to CSV File");
-        System.out.println("-----------------------------------------");
         
         String filename = "ride_history_export.csv";
-        System.out.println("Target file: " + filename);
-        System.out.println("Export started at: " + new Date());
-        
+        System.out.println("Exporting to file: " + filename);
         rollerCoaster.exportRideHistory(filename);
         
-        // Step 7: Verify the exported file
-        System.out.println("Step 7: Verifying Exported File");
-        System.out.println("------------------------------");
-        verifyExportedFile(filename);
-        
-        // Step 8: Test export with different scenarios
-        System.out.println("Step 8: Testing Different Export Scenarios");
-        System.out.println("-----------------------------------------");
-        
-        // Test 8a: Export empty ride history
-        System.out.println("\nTest 8a: Exporting Empty Ride History");
-        Ride emptyRide = new Ride("Empty Ride", "Test", 10, true, operator, 2);
-        emptyRide.exportRideHistory("empty_history.csv");
-        
-        // Test 8b: Export with custom options
-        System.out.println("\nTest 8b: Exporting with Custom Format");
-        rollerCoaster.exportRideHistory("custom_export.csv", true, "|");
-        
-        // Test 8c: Test error conditions
-        System.out.println("\nTest 8c: Testing Error Conditions");
-        
-        // Try to export to invalid filename
-        System.out.println("\nTesting invalid filename:");
-        rollerCoaster.exportRideHistory("/invalid/path/file.csv");
-        
-        // Try to export with visitor containing commas in name (testing escapeCommas)
-        System.out.println("\nTesting export with special characters:");
-        Ride specialRide = new Ride("Special Ride", "Test", 10, true, operator, 2);
-        Visitor specialVisitor = new Visitor("Test, Comma, Name", 25, "Male", "V9999", "Test,Type", false);
-        specialRide.addVisitorToHistory(specialVisitor);
-        specialRide.exportRideHistory("special_chars.csv");
-        
-        // Step 9: Show file content preview
-        System.out.println("Step 9: Previewing Exported File Content");
-        System.out.println("---------------------------------------");
-        previewFileContent(filename);
-        
-        System.out.println("\nPART 6 DEMONSTRATION COMPLETED SUCCESSFULLY!");
-        System.out.println("===========================================");
-        System.out.println("Summary:");
-        System.out.println("- Created ride with " + visitors.length + " visitors in history");
-        System.out.println("- Implemented exportRideHistory() method with CSV format");
-        System.out.println("- Added proper exception handling for file I/O operations");
-        System.out.println("- Demonstrated data validation before export");
-        System.out.println("- Tested various export scenarios and error conditions");
-        System.out.println("- Files created: ride_history_export.csv, empty_history.csv, custom_export.csv, special_chars.csv");
-    }
-    
-    /**
-     * Helper method to verify that a file was created successfully
-     * @param filename The name of the file to verify
-     */
-    private void verifyExportedFile(String filename) {
+        // Verify file was created
         File file = new File(filename);
-        
         if (file.exists()) {
-            System.out.println("SUCCESS: File created: " + filename);
+            System.out.println("SUCCESS: File created at: " + file.getAbsolutePath());
             System.out.println("File size: " + file.length() + " bytes");
-            System.out.println("Absolute path: " + file.getAbsolutePath());
-            System.out.println("Last modified: " + new Date(file.lastModified()));
-            
-            // Check if file is readable and writable
-            System.out.println("Readable: " + file.canRead());
-            System.out.println("Writable: " + file.canWrite());
         } else {
-            System.out.println("ERROR: File was not created: " + filename);
+            System.out.println("ERROR: File was not created");
         }
+    }
+    
+    // Part 7: Reading from File
+    public void partSeven() {
+        // First, create a test file if it doesn't exist
+        createTestImportFile();
+        
+        Employee operator = new Employee("Import Manager", 40, "Female", "E7001", "Data Operations", "Import Specialist");
+        Ride importedRide = new Ride("Import Adventure", "Roller Coaster", 30, true, operator, 4);
+        
+        System.out.println("Before import:");
+        System.out.println("History size: " + importedRide.numberOfVisitors());
+        
+        String filename = "test_ride_history.csv";
+        importedRide.importRideHistory(filename);
+        
+        System.out.println("\nAfter import:");
+        System.out.println("History size: " + importedRide.numberOfVisitors());
+        
+        if (importedRide.numberOfVisitors() > 0) {
+            System.out.println("\nDisplaying imported visitors:");
+            importedRide.printRideHistory();
+        }
+        
+        // Test importing the file created in Part 6
+        System.out.println("\n\nNow importing the file created in Part 6:");
+        Ride part6Import = new Ride("Part6 Import", "Test", 20, true, operator, 3);
+        part6Import.importRideHistory("ride_history_export.csv");
     }
     
     /**
-     * Helper method to preview the first few lines of a file
-     * @param filename The name of the file to preview
+     * Helper method to create a test file for import demonstration
      */
-    private void previewFileContent(String filename) {
-        System.out.println("Preview of file: " + filename);
-        System.out.println("First 5 lines:");
-        System.out.println("---------------");
-        
-        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(filename))) {
-            String line;
-            int lineCount = 0;
+    private void createTestImportFile() {
+        try {
+            File testFile = new File("test_ride_history.csv");
             
-            while ((line = reader.readLine()) != null && lineCount < 5) {
-                System.out.println(line);
-                lineCount++;
+            if (!testFile.exists()) {
+                String content = "# Test Ride History for Import\n" +
+                               "# Format: Name,Age,Gender,VisitorID,TicketType,HasSeasonPass\n" +
+                               "Test Visitor 1,25,Male,TV001,Premium,true\n" +
+                               "Test Visitor 2,30,Female,TV002,Standard,false\n" +
+                               "Test Visitor 3,22,Male,TV003,Student,true\n" +
+                               "Test Visitor 4,35,Female,TV004,VIP,false\n" +
+                               "Test Visitor 5,28,Male,TV005,Standard,true\n";
+                
+                Files.write(testFile.toPath(), content.getBytes());
+                System.out.println("Created test import file: test_ride_history.csv");
             }
-            
-            if (lineCount == 0) {
-                System.out.println("(File is empty)");
-            }
-            
-        } catch (java.io.FileNotFoundException e) {
-            System.out.println("ERROR: File not found: " + filename);
-        } catch (java.io.IOException e) {
-            System.out.println("ERROR: Cannot read file: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Failed to create test import file: " + e.getMessage());
         }
     }
-    
-    // Placeholder method for future part
-    public void partSeven() {}
 }

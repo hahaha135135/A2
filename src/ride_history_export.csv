@@ -1,0 +1,8 @@
+# Ride History Export for: Export Express
+# Export Date: Mon Dec 01 18:12:23 CST 2025
+# Format: Name,Age,Gender,VisitorID,TicketType,HasSeasonPass
+John Datafield,28,Male,V6001,Premium,true
+Sarah CSV,32,Female,V6002,Standard,false
+Mike Fileman,45,Male,V6003,VIP,true
+Emma Export,22,Female,V6004,Student,false
+David Writer,38,Male,V6005,Standard,true
